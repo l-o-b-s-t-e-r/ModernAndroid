@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="user"
+            type="com.example.myapplication.domain.entities.User" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_xl"
+        android:orientation="vertical"
+        android:padding="@dimen/padding_xl"
+        tools:showIn="@layout/list_fragment"
+        android:background="@android:color/white">
+
+        <ImageView
+            android:id="@+id/icon_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_female" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/text_size_xl"
+            android:textStyle="bold"
+            android:text="@{user.name}"
+            tools:text="TestName" />
+
+    </RelativeLayout>
+</layout>
