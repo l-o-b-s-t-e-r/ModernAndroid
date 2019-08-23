@@ -1,9 +1,11 @@
 package com.example.myapplication.view.list
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.BR
 import com.example.myapplication.R
@@ -12,7 +14,27 @@ import com.example.myapplication.domain.entities.Male
 import com.example.myapplication.domain.entities.User
 
 
-class UsersListAdapter : RecyclerView.Adapter<UsersListAdapter.ViewHolder>() {
+class UsersListAdapter(private val listeners: ListViewListeners) : RecyclerView.Adapter<UsersListAdapter.ViewHolder>() {
+
+    private inner class DiffCallback(
+        private val oldUsers: List<User>,
+        private val newUsers: List<User>
+    ) :
+        DiffUtil.Callback() {
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldUsers[oldItemPosition].id == newUsers[newItemPosition].id
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
+            oldUsers[oldItemPosition] == newUsers[newItemPosition]
+
+        override fun getOldListSize() = oldUsers.size
+
+        override fun getNewListSize() = newUsers.size
+
+        override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+            return super.getChangePayload(oldItemPosition, newItemPosition)
+        }
+    }
 
     var users: MutableList<User> = mutableListOf()
 
@@ -44,16 +66,19 @@ class UsersListAdapter : RecyclerView.Adapter<UsersListAdapter.ViewHolder>() {
         }
     }
 
-    fun addAll(newUsers: List<User>) {
+    fun updateAll(newUsers: List<User>) {
+        val diff = DiffUtil.calculateDiff(DiffCallback(users, newUsers))
+        users.clear()
         users.addAll(newUsers)
-        notifyItemRangeChanged(users.size, newUsers.size)
+        diff.dispatchUpdatesTo(this)
     }
 
-    class ViewHolder(private val binding: ViewDataBinding) :
+    inner class ViewHolder(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.getRoot()) {
         fun bind(obj: Any) {
             binding.apply {
                 setVariable(BR.user, obj)
+                setVariable(BR.actionListener, listeners)
                 executePendingBindings()
             }
         }
