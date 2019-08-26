@@ -26,6 +26,8 @@ class ListViewModel(
 
     var usersLoaded = MutableLiveData<Boolean>().apply { postValue(false) }
 
+    var isError = MutableLiveData<Boolean>().apply { postValue(false) }
+
     @SuppressLint("CheckResult")
     fun getAllUsers(): Flowable<List<User>> {
         return getAllUsersUseCase.execute()
@@ -36,15 +38,19 @@ class ListViewModel(
     fun loadAllUsers() {
         loadAndSaveAllUsersUseCase.execute()
             .delay(2, TimeUnit.SECONDS)
+            .retry(2)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoading.postValue(true) }
             .doFinally { isLoading.postValue(false) }
             .subscribe({
-                Log.i("loadUsers", "Users was loaded successfully.")
+                Log.i("loadUsers", "Users were loaded successfully.")
                 usersLoaded.postValue(true)
             }, { e ->
+                Log.e("loadUsers", "Users were not loaded.")
                 e.printStackTrace()
+
+                isError.postValue(true)
             })
     }
 
