@@ -1,4 +1,4 @@
-package com.example.myapplication.data
+package com.example.myapplication.data.repositories.remote
 
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male

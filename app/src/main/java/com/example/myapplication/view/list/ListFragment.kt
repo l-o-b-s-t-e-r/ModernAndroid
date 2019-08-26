@@ -1,20 +1,16 @@
 package com.example.myapplication.view.list
 
 import android.content.Context
-import android.graphics.Color
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.App
-import com.example.myapplication.R
-import com.example.myapplication.domain.entities.User
+import com.example.myapplication.databinding.ListFragmentBinding
 import kotlinx.android.synthetic.main.list_fragment.*
-import com.example.myapplication.di.DaggerAppComponent
-import com.example.myapplication.di.DataModule
 import javax.inject.Inject
 
 
@@ -26,8 +22,20 @@ class ListFragment : Fragment() {
 
     @Inject
     lateinit var viewModelFactory: ListViewModelFactory
+
     private lateinit var userListAdapter: UsersListAdapter
     private lateinit var viewModel: ListViewModel
+    private lateinit var binding: ListFragmentBinding
+
+    private val usersObserver = Observer<Boolean> { usersLoaded ->
+        if (usersLoaded) {
+            viewModel.users.subscribe({ users ->
+                userListAdapter.updateAll(users)
+            }, {
+                it.printStackTrace()
+            })
+        }
+    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -39,22 +47,23 @@ class ListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.list_fragment, container, false)
+        binding = ListFragmentBinding.inflate(inflater)
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(ListViewModel::class.java)
 
+        binding.viewModel = viewModel
         userListAdapter = UsersListAdapter(viewModel)
         listUsers.adapter = userListAdapter
 
         viewModel.apply {
-            users.observe(this@ListFragment, Observer<List<User>> { users ->
-                userListAdapter.updateAll(users)
-            })
+            usersLoaded.observe(this@ListFragment, usersObserver)
 
-            loadUsers()
+            loadAllUsers()
         }
     }
 }

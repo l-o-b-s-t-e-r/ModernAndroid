@@ -1,10 +1,9 @@
 package com.example.myapplication.data.repositories.local
 
-import androidx.lifecycle.LiveData
 import com.example.myapplication.data.db.AppDatabase
 import com.example.myapplication.domain.entities.User
 import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.Flowable
 
 class LocalRepository(private val db: AppDatabase) : ILocalRepository {
 
@@ -12,7 +11,7 @@ class LocalRepository(private val db: AppDatabase) : ILocalRepository {
         return db.userDao().saveAll(users)
     }
 
-    override fun getAllUsers(): LiveData<List<User>> {
+    override fun getAllUsers(): Flowable<List<User>> {
         return db.userDao().getAll()
     }
 

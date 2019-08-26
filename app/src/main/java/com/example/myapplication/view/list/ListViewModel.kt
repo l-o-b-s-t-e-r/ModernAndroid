@@ -2,31 +2,47 @@ package com.example.myapplication.view.list
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.myapplication.domain.entities.User
 import com.example.myapplication.domain.usecases.GetAllUsersUseCase
-import com.example.myapplication.domain.usecases.LoadAllUsersUseCase
+import com.example.myapplication.domain.usecases.LoadAndSaveAllUsersUseCase
 import com.example.myapplication.domain.usecases.UpdateUserColorUseCase
 import com.example.myapplication.randomColor
+import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 class ListViewModel(
     private val getAllUsersUseCase: GetAllUsersUseCase,
-    private val loadAllUsersUseCase: LoadAllUsersUseCase,
+    private val loadAndSaveAllUsersUseCase: LoadAndSaveAllUsersUseCase,
     private val updateUserColorUseCase: UpdateUserColorUseCase
 ) : ViewModel(), ListViewListeners {
 
-    var users: LiveData<List<User>> = getAllUsersUseCase.execute()
+    val users: Flowable<List<User>> by lazy { getAllUsers() }
+
+    var isLoading = MutableLiveData<Boolean>().apply { postValue(false) }
+
+    var usersLoaded = MutableLiveData<Boolean>().apply { postValue(false) }
 
     @SuppressLint("CheckResult")
-    fun loadUsers() {
-        loadAllUsersUseCase.execute()
+    fun getAllUsers(): Flowable<List<User>> {
+        return getAllUsersUseCase.execute()
+            .observeOn(AndroidSchedulers.mainThread())
+    }
+
+    @SuppressLint("CheckResult")
+    fun loadAllUsers() {
+        loadAndSaveAllUsersUseCase.execute()
+            .delay(2, TimeUnit.SECONDS)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { isLoading.postValue(true) }
+            .doFinally { isLoading.postValue(false) }
             .subscribe({
                 Log.i("loadUsers", "Users was loaded successfully.")
+                usersLoaded.postValue(true)
             }, { e ->
                 e.printStackTrace()
             })

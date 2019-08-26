@@ -1,13 +1,12 @@
 package com.example.myapplication.data.repositories.local
 
-import androidx.lifecycle.LiveData
 import com.example.myapplication.domain.entities.User
 import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.Flowable
 
 interface ILocalRepository {
 
-    fun getAllUsers(): LiveData<List<User>>
+    fun getAllUsers(): Flowable<List<User>>
 
     fun saveAllUsers(users: List<User>): Completable
 

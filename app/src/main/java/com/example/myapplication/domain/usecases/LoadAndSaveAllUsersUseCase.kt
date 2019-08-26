@@ -4,7 +4,7 @@ import com.example.myapplication.data.repositories.local.ILocalRepository
 import com.example.myapplication.data.repositories.remote.IRemoteRepository
 import javax.inject.Inject
 
-class LoadAllUsersUseCase @Inject constructor(
+class LoadAndSaveAllUsersUseCase @Inject constructor(
     private val remoteRepository: IRemoteRepository,
     private val localRepository: ILocalRepository
 ) {
