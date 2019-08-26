@@ -12,7 +12,6 @@ import com.example.myapplication.randomColor
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 class ListViewModel(
     private val getAllUsersUseCase: GetAllUsersUseCase,
@@ -28,17 +27,19 @@ class ListViewModel(
 
     var isError = MutableLiveData<Boolean>().apply { postValue(false) }
 
+    var isUsersListEmpty = MutableLiveData<Boolean>().apply { postValue(false) }
+
     @SuppressLint("CheckResult")
     fun getAllUsers(): Flowable<List<User>> {
         return getAllUsersUseCase.execute()
+            /*.map { listOf<User>() }*/ //Uncomment this to see empty list title
+            .doOnNext { users -> isUsersListEmpty.postValue(users.isEmpty()) }
             .observeOn(AndroidSchedulers.mainThread())
     }
 
     @SuppressLint("CheckResult")
     fun loadAllUsers() {
         loadAndSaveAllUsersUseCase.execute()
-            .delay(2, TimeUnit.SECONDS)
-            .retry(2)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { isLoading.postValue(true) }
