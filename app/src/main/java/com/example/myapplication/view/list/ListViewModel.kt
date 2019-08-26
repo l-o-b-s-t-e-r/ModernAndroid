@@ -21,13 +21,13 @@ class ListViewModel(
 
     val users: Flowable<List<User>> by lazy { getAllUsers() }
 
-    var isLoading = MutableLiveData<Boolean>().apply { postValue(false) }
+    val isLoading = MutableLiveData<Boolean>().apply { postValue(false) }
 
-    var usersLoaded = MutableLiveData<Boolean>().apply { postValue(false) }
+    val usersLoaded = MutableLiveData<Boolean>().apply { postValue(false) }
 
-    var isError = MutableLiveData<Boolean>().apply { postValue(false) }
+    val isError = MutableLiveData<Boolean>()
 
-    var isUsersListEmpty = MutableLiveData<Boolean>().apply { postValue(false) }
+    val isUsersListEmpty = MutableLiveData<Boolean>()
 
     @SuppressLint("CheckResult")
     fun getAllUsers(): Flowable<List<User>> {
@@ -42,8 +42,14 @@ class ListViewModel(
         loadAndSaveAllUsersUseCase.execute()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { isLoading.postValue(true) }
-            .doFinally { isLoading.postValue(false) }
+            .doOnSubscribe {
+                if (isUsersListEmpty.value == null && isError.value == null) {
+                    isLoading.postValue(true)
+                }
+            }
+            .doFinally {
+                isLoading.postValue(false)
+            }
             .subscribe({
                 Log.i("loadUsers", "Users were loaded successfully.")
                 usersLoaded.postValue(true)

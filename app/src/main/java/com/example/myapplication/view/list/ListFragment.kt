@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.App
 import com.example.myapplication.databinding.ListFragmentBinding
+import com.example.myapplication.view.main.MainViewModel
 import kotlinx.android.synthetic.main.list_fragment.*
 import javax.inject.Inject
 
@@ -24,16 +25,23 @@ class ListFragment : Fragment() {
     lateinit var viewModelFactory: ListViewModelFactory
 
     private lateinit var userListAdapter: UsersListAdapter
-    private lateinit var viewModel: ListViewModel
+    private lateinit var listViewModel: ListViewModel
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: ListFragmentBinding
 
     private val usersObserver = Observer<Boolean> { usersLoaded ->
         if (usersLoaded) {
-            viewModel.users.subscribe({ users ->
+            listViewModel.users.subscribe({ users ->
                 userListAdapter.updateAll(users)
             }, {
                 it.printStackTrace()
             })
+        }
+    }
+
+    private val isLoadingObserver = Observer<Boolean> { isLoading ->
+        if (isLoading.not()) {
+            mainViewModel.isRefreshing.postValue(false)
         }
     }
 
@@ -54,16 +62,27 @@ class ListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(ListViewModel::class.java)
+        listViewModel = ViewModelProviders.of(this, viewModelFactory)[ListViewModel::class.java]
+        mainViewModel = ViewModelProviders.of(activity!!)[MainViewModel::class.java]
 
-        binding.viewModel = viewModel
-        userListAdapter = UsersListAdapter(viewModel)
+        binding.viewModel = listViewModel
+        userListAdapter = UsersListAdapter(listViewModel)
         listUsers.adapter = userListAdapter
 
-        viewModel.apply {
+        listViewModel.apply {
             usersLoaded.observe(this@ListFragment, usersObserver)
 
+            isLoading.observe(this@ListFragment, isLoadingObserver)
+
             loadAllUsers()
+        }
+
+        mainViewModel.apply {
+            isRefreshing.observe(this@ListFragment, Observer<Boolean> { isRefreshing ->
+                if (isRefreshing) {
+                    listViewModel.loadAllUsers()
+                }
+            })
         }
     }
 }
