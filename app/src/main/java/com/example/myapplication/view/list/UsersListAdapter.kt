@@ -1,6 +1,5 @@
 package com.example.myapplication.view.list
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -11,14 +10,14 @@ import com.example.myapplication.BR
 import com.example.myapplication.R
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
-import com.example.myapplication.domain.entities.User
+import com.example.myapplication.domain.entities.UserEntity
 
 
 class UsersListAdapter(private val listeners: ListViewListeners) : RecyclerView.Adapter<UsersListAdapter.ViewHolder>() {
 
     private inner class DiffCallback(
-        private val oldUsers: List<User>,
-        private val newUsers: List<User>
+        private val oldUsers: List<UserEntity>,
+        private val newUsers: List<UserEntity>
     ) :
         DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
@@ -36,7 +35,7 @@ class UsersListAdapter(private val listeners: ListViewListeners) : RecyclerView.
         }
     }
 
-    var users: MutableList<User> = mutableListOf()
+    var users: MutableList<UserEntity> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(
@@ -44,7 +43,7 @@ class UsersListAdapter(private val listeners: ListViewListeners) : RecyclerView.
         )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getObjForPosition(position))
+        holder.bind(users[position])
     }
 
     override fun getItemCount(): Int {
@@ -52,21 +51,13 @@ class UsersListAdapter(private val listeners: ListViewListeners) : RecyclerView.
     }
 
     override fun getItemViewType(position: Int): Int {
-        return getLayoutIdForPosition(position)
-    }
-
-    private fun getObjForPosition(position: Int): Any {
-        return users[position]
-    }
-
-    private fun getLayoutIdForPosition(position: Int): Int {
         return when (users[position].gender) {
             is Male -> R.layout.item_male
             is Female -> R.layout.item_female
         }
     }
 
-    fun updateAll(newUsers: List<User>) {
+    fun updateAll(newUsers: List<UserEntity>) {
         val diff = DiffUtil.calculateDiff(DiffCallback(users, newUsers))
         users.clear()
         users.addAll(newUsers)
@@ -74,7 +65,7 @@ class UsersListAdapter(private val listeners: ListViewListeners) : RecyclerView.
     }
 
     inner class ViewHolder(private val binding: ViewDataBinding) :
-        RecyclerView.ViewHolder(binding.getRoot()) {
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(obj: Any) {
             binding.apply {
                 setVariable(BR.user, obj)

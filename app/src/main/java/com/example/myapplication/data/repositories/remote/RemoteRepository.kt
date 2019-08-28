@@ -2,510 +2,510 @@ package com.example.myapplication.data.repositories.remote
 
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
-import com.example.myapplication.domain.entities.User
+import com.example.myapplication.domain.entities.UserEntity
 import io.reactivex.Single
 
 class RemoteRepository : IRemoteRepository {
 
-    override fun loadAllUsers(): Single<List<User>> {
+    override fun loadAllUsers(): Single<List<UserEntity>> {
         return Single.just(
             listOf(
-                User(
+                UserEntity(
                     "93",
                     "Lucile",
                     Female
                 ),
-                User(
+                UserEntity(
                     "42",
                     "Jordan",
                     Male
                 ),
-                User(
+                UserEntity(
                     "86",
                     "Beatriz",
                     Female
                 ),
-                User(
+                UserEntity(
                     "61",
                     "Emmaline",
                     Female
                 ),
-                User(
+                UserEntity(
                     "31",
                     "Arthur",
                     Male
                 ),
-                User(
+                UserEntity(
                     "47",
                     "Mohammad",
                     Male
                 ),
-                User(
+                UserEntity(
                     "38",
                     "Brandon",
                     Male
                 ),
-                User(
+                UserEntity(
                     "19",
                     "Buster",
                     Male
                 ),
-                User(
+                UserEntity(
                     "16",
                     "Chas",
                     Male
                 ),
-                User(
+                UserEntity(
                     "34",
                     "Quinton",
                     Male
                 ),
-                User(
+                UserEntity(
                     "48",
                     "Bertram",
                     Male
                 ),
-                User(
+                UserEntity(
                     "17",
                     "Marcos",
                     Male
                 ),
-                User(
+                UserEntity(
                     "6",
                     "Weldon",
                     Male
                 ),
-                User(
+                UserEntity(
                     "37",
                     "Rogelio",
                     Male
                 ),
-                User(
+                UserEntity(
                     "24",
                     "Samual",
                     Male
                 ),
-                User(
+                UserEntity(
                     "77",
                     "Colette",
                     Female
                 ),
-                User(
+                UserEntity(
                     "50",
                     "Page",
                     Female
                 ),
-                User(
+                UserEntity(
                     "71",
                     "Mee",
                     Female
                 ),
-                User(
+                UserEntity(
                     "65",
                     "Alta",
                     Female
                 ),
-                User(
+                UserEntity(
                     "79",
                     "Liana",
                     Female
                 ),
-                User(
+                UserEntity(
                     "43",
                     "Mario",
                     Male
                 ),
-                User(
+                UserEntity(
                     "60",
                     "Eun",
                     Female
                 ),
-                User(
+                UserEntity(
                     "56",
                     "Carmelina",
                     Female
                 ),
-                User(
+                UserEntity(
                     "45",
                     "Bernard",
                     Male
                 ),
-                User(
+                UserEntity(
                     "15",
                     "Keenan",
                     Male
                 ),
-                User(
+                UserEntity(
                     "92",
                     "Darci",
                     Female
                 ),
-                User(
+                UserEntity(
                     "41",
                     "Dalton",
                     Male
                 ),
-                User(
+                UserEntity(
                     "69",
                     "Phoebe",
                     Female
                 ),
-                User(
+                UserEntity(
                     "4",
                     "Kim",
                     Male
                 ),
-                User(
+                UserEntity(
                     "51",
                     "Analisa",
                     Female
                 ),
-                User(
+                UserEntity(
                     "63",
                     "Yon",
                     Female
                 ),
-                User(
+                UserEntity(
                     "78",
                     "Maura",
                     Female
                 ),
-                User(
+                UserEntity(
                     "82",
                     "Tanna",
                     Female
                 ),
-                User(
+                UserEntity(
                     "30",
                     "Bennett",
                     Male
                 ),
-                User(
+                UserEntity(
                     "3",
                     "Alvin",
                     Male
                 ),
-                User(
+                UserEntity(
                     "80",
                     "Aide",
                     Female
                 ),
-                User(
+                UserEntity(
                     "76",
                     "Regine",
                     Female
                 ),
-                User(
+                UserEntity(
                     "52",
                     "Isela",
                     Female
                 ),
-                User(
+                UserEntity(
                     "55",
                     "Myong",
                     Female
                 ),
-                User(
+                UserEntity(
                     "11",
                     "Basil",
                     Male
                 ),
-                User(
+                UserEntity(
                     "5",
                     "Emerson",
                     Male
                 ),
-                User(
+                UserEntity(
                     "58",
                     "Angila",
                     Female
                 ),
-                User(
+                UserEntity(
                     "64",
                     "Joanie",
                     Female
                 ),
-                User(
+                UserEntity(
                     "0",
                     "Damion",
                     Male
                 ),
-                User(
+                UserEntity(
                     "68",
                     "Maia",
                     Female
                 ),
-                User(
+                UserEntity(
                     "87",
                     "Carla",
                     Female
                 ),
-                User(
+                UserEntity(
                     "54",
                     "Lajuana",
                     Female
                 ),
-                User(
+                UserEntity(
                     "33",
                     "Newton",
                     Male
                 ),
-                User(
+                UserEntity(
                     "96",
                     "Georgianna",
                     Female
                 ),
-                User(
+                UserEntity(
                     "49",
                     "Anton",
                     Male
                 ),
-                User(
+                UserEntity(
                     "32",
                     "Dewayne",
                     Male
                 ),
-                User(
+                UserEntity(
                     "95",
                     "Aline",
                     Female
                 ),
-                User(
+                UserEntity(
                     "73",
                     "Emogene",
                     Female
                 ),
-                User(
+                UserEntity(
                     "94",
                     "Allyn",
                     Female
                 ),
-                User(
+                UserEntity(
                     "23",
                     "Claud",
                     Male
                 ),
-                User(
+                UserEntity(
                     "9",
                     "Harvey",
                     Male
                 ),
-                User(
+                UserEntity(
                     "97",
                     "Marianne",
                     Female
                 ),
-                User(
+                UserEntity(
                     "88",
                     "Rosa",
                     Female
                 ),
-                User(
+                UserEntity(
                     "39",
                     "Patricia",
                     Male
                 ),
-                User(
+                UserEntity(
                     "70",
                     "Catrina",
                     Female
                 ),
-                User(
+                UserEntity(
                     "66",
                     "Mathilde",
                     Female
                 ),
-                User(
+                UserEntity(
                     "36",
                     "Tracy",
                     Male
                 ),
-                User(
+                UserEntity(
                     "14",
                     "Zachary",
                     Male
                 ),
-                User(
+                UserEntity(
                     "46",
                     "Reynaldo",
                     Male
                 ),
-                User(
+                UserEntity(
                     "40",
                     "Dewey",
                     Male
                 ),
-                User(
+                UserEntity(
                     "67",
                     "Jayme",
                     Female
                 ),
-                User(
+                UserEntity(
                     "62",
                     "Melania",
                     Female
                 ),
-                User(
+                UserEntity(
                     "81",
                     "Yolando",
                     Female
                 ),
-                User(
+                UserEntity(
                     "27",
                     "Richard",
                     Male
                 ),
-                User(
+                UserEntity(
                     "12",
                     "Francis",
                     Male
                 ),
-                User(
+                UserEntity(
                     "28",
                     "Cleveland",
                     Male
                 ),
-                User(
+                UserEntity(
                     "75",
                     "Jacqueline",
                     Female
                 ),
-                User(
+                UserEntity(
                     "53",
                     "Shaina",
                     Female
                 ),
-                User(
+                UserEntity(
                     "22",
                     "Samuel",
                     Male
                 ),
-                User(
+                UserEntity(
                     "99",
                     "Daniella",
                     Female
                 ),
-                User(
+                UserEntity(
                     "29",
                     "Jake",
                     Male
                 ),
-                User(
+                UserEntity(
                     "89",
                     "Lorrine",
                     Female
                 ),
-                User(
+                UserEntity(
                     "26",
                     "Sanford",
                     Male
                 ),
-                User(
+                UserEntity(
                     "91",
                     "Verla",
                     Female
                 ),
-                User(
+                UserEntity(
                     "1",
                     "Otto",
                     Male
                 ),
-                User(
+                UserEntity(
                     "10",
                     "Eugenio",
                     Male
                 ),
-                User(
+                UserEntity(
                     "57",
                     "Nicki",
                     Female
                 ),
-                User(
+                UserEntity(
                     "98",
                     "Sharyn",
                     Female
                 ),
-                User(
+                UserEntity(
                     "90",
                     "Carmelita",
                     Female
                 ),
-                User(
+                UserEntity(
                     "25",
                     "Colby",
                     Male
                 ),
-                User(
+                UserEntity(
                     "21",
                     "Prince",
                     Male
                 ),
-                User(
+                UserEntity(
                     "84",
                     "Lavada",
                     Female
                 ),
-                User(
+                UserEntity(
                     "13",
                     "Bryce",
                     Male
                 ),
-                User(
+                UserEntity(
                     "74",
                     "Sophie",
                     Female
                 ),
-                User(
+                UserEntity(
                     "59",
                     "Amanda",
                     Female
                 ),
-                User(
+                UserEntity(
                     "20",
                     "Sid",
                     Male
                 ),
-                User(
+                UserEntity(
                     "7",
                     "Ali",
                     Male
                 ),
-                User(
+                UserEntity(
                     "8",
                     "Ferdinand",
                     Male
                 ),
-                User(
+                UserEntity(
                     "18",
                     "Thad",
                     Male
                 ),
-                User(
+                UserEntity(
                     "2",
                     "Brock",
                     Male
                 ),
-                User(
+                UserEntity(
                     "72",
                     "Erica",
                     Female
                 ),
-                User(
+                UserEntity(
                     "83",
                     "Mathilda",
                     Female
                 ),
-                User(
+                UserEntity(
                     "44",
                     "Irving",
                     Male
                 ),
-                User(
+                UserEntity(
                     "35",
                     "Mohamed",
                     Male
                 ),
-                User(
+                UserEntity(
                     "85",
                     "Deadra",
                     Female

@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
             name="user"
-            type="com.example.myapplication.domain.entities.User" />
+            type="com.example.myapplication.domain.entities.UserEntity" />
 
         <variable
             name="actionListener"
@@ -16,7 +15,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/item_height"
         android:layout_margin="@dimen/margin_xl"
         android:onClick="@{()->actionListener.onItemClick(user)}"
         android:orientation="vertical"

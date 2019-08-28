@@ -6,9 +6,9 @@ import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.data.dao.UserDao
-import com.example.myapplication.domain.entities.User
+import com.example.myapplication.domain.entities.UserEntity
 
-@Database(entities = arrayOf(User::class), version = 2)
+@Database(entities = arrayOf(UserEntity::class), version = 2)
 @TypeConverters(value = [DateTypeConverter::class])
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

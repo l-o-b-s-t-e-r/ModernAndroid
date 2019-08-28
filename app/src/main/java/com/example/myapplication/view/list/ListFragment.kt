@@ -2,6 +2,7 @@ package com.example.myapplication.view.list
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +26,7 @@ class ListFragment : Fragment() {
     lateinit var viewModelFactory: ListViewModelFactory
 
     private lateinit var userListAdapter: UsersListAdapter
+    private lateinit var userListPagedAdapter: UsersListPagedAdapter
     private lateinit var listViewModel: ListViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: ListFragmentBinding
@@ -35,6 +37,29 @@ class ListFragment : Fragment() {
                 userListAdapter.updateAll(users)
             }, {
                 it.printStackTrace()
+            })
+        }
+    }
+
+    private val usersPagedObserver = Observer<Boolean> { usersLoaded ->
+        if (usersLoaded) {
+            Log.e("TAG", "usersLoaded")
+            listViewModel.usersPaged.subscribe({ users ->
+                Log.e("NEW", users.size.toString())
+                userListPagedAdapter.submitList(null)
+                userListPagedAdapter.submitList(users)
+            }, {
+                it.printStackTrace()
+            })
+        }
+    }
+
+    private val usersPagedByNameObserver = Observer<Boolean> { usersLoaded ->
+        if (usersLoaded) {
+            Log.e("TAG", "usersLoaded")
+            listViewModel.usersPagedByName.observe(this, Observer { users ->
+                Log.e("NEW", users.size.toString())
+                userListPagedAdapter.submitList(users)
             })
         }
     }
@@ -67,10 +92,14 @@ class ListFragment : Fragment() {
 
         binding.viewModel = listViewModel
         userListAdapter = UsersListAdapter(listViewModel)
-        listUsers.adapter = userListAdapter
+        userListPagedAdapter = UsersListPagedAdapter(listViewModel)
+        //listUsers.adapter = userListAdapter
+        listUsers.adapter = userListPagedAdapter
 
         listViewModel.apply {
-            usersLoaded.observe(this@ListFragment, usersObserver)
+            //usersLoaded.observe(this@ListFragment, usersObserver)
+            //usersLoaded.observe(this@ListFragment, usersPagedObserver)
+            usersLoaded.observe(this@ListFragment, usersPagedByNameObserver)
 
             isLoading.observe(this@ListFragment, isLoadingObserver)
 

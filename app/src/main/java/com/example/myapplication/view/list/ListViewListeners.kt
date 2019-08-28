@@ -1,9 +1,9 @@
 package com.example.myapplication.view.list
 
-import com.example.myapplication.domain.entities.User
+import com.example.myapplication.domain.entities.UserEntity
 
 interface ListViewListeners {
 
-    fun onItemClick(user: User)
+    fun onItemClick(user: UserEntity)
 
 }
