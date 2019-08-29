@@ -6,22 +6,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
-import com.example.myapplication.data.UserDataSourceFactory
+import com.example.myapplication.domain.NetworkState
+import com.example.myapplication.domain.NotLoading
+import com.example.myapplication.domain.RefreshState
 import com.example.myapplication.domain.entities.UserEntity
-import com.example.myapplication.domain.usecases.*
+import com.example.myapplication.domain.usecases.GetAllUsersPerPageUseCase
+import com.example.myapplication.domain.usecases.UpdateAllUsersUseCase
+import com.example.myapplication.domain.usecases.UpdateUserColorUseCase
 import com.example.myapplication.randomColor
-import io.reactivex.Flowable
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class ListViewModel(
-    private val getAllUsersUseCase: GetAllUsersUseCase,
-    private val loadAndSaveAllUsersUseCase: LoadAndSaveAllUsersUseCase,
+    private val updateAllUsersUseCase: UpdateAllUsersUseCase,
     private val updateUserColorUseCase: UpdateUserColorUseCase,
-    private val getAllUsersPerPageUseCase: GetAllUsersPerPageUseCase,
-    private val getAllUsersPerPageByNameUseCase: GetAllUsersPerPageByNameUseCase,
-    private val dataSource: UserDataSourceFactory
+    private val getAllUsersPerPageUseCase: GetAllUsersPerPageUseCase
 ) : ViewModel(), ListViewListeners {
 
     private val PAGED_LIST_CONFIG = PagedList.Config.Builder()
@@ -31,58 +30,27 @@ class ListViewModel(
         .setPageSize(5)
         .build()
 
-    val users: Flowable<List<UserEntity>> by lazy { getAllUsers() }
+    val networkState = MutableLiveData<NetworkState>()
 
-    val usersPaged: Observable<PagedList<UserEntity>> by lazy { getAllUsersPerPage(PAGED_LIST_CONFIG) }
+    val refreshState = MutableLiveData<RefreshState>()
 
-    val usersPagedByName: LiveData<PagedList<UserEntity>> by lazy { getAllUsersPerPageByName(PAGED_LIST_CONFIG) }
-
-    val isLoading = MutableLiveData<Boolean>().apply { postValue(false) }
-
-    val usersLoaded = MutableLiveData<Boolean>().apply { postValue(false) }
-
-    val isError = MutableLiveData<Boolean>()
-
-    val isUsersListEmpty = MutableLiveData<Boolean>()
-
-    @SuppressLint("CheckResult")
-    private fun getAllUsers(): Flowable<List<UserEntity>> {
-        return getAllUsersUseCase.execute()
-            /*.map { listOf<UserEntity>() }*/ //Uncomment this to see empty list title
-            .doOnNext { users -> isUsersListEmpty.postValue(users.isEmpty()) }
-            .observeOn(AndroidSchedulers.mainThread())
+    val users: LiveData<PagedList<UserEntity>> by lazy {
+        getAllUsersPerPage(PAGED_LIST_CONFIG)
     }
 
-    private fun getAllUsersPerPage(config: PagedList.Config): Observable<PagedList<UserEntity>> {
-        return getAllUsersPerPageUseCase.execute(config)
-            .doOnNext { users -> isUsersListEmpty.postValue(users.isEmpty()) }
-    }
-
-    private fun getAllUsersPerPageByName(config: PagedList.Config): LiveData<PagedList<UserEntity>> {
-        return getAllUsersPerPageByNameUseCase.execute(dataSource, config)
+    private fun getAllUsersPerPage(config: PagedList.Config): LiveData<PagedList<UserEntity>> {
+        return getAllUsersPerPageUseCase.execute(config, networkState)
     }
 
     @SuppressLint("CheckResult")
-    fun loadAllUsers() {
-        loadAndSaveAllUsersUseCase.execute()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                if (isUsersListEmpty.value == null && isError.value == null) {
-                    isLoading.postValue(true)
-                }
-            }
-            .doFinally {
-                isLoading.postValue(false)
-            }
+    fun updateAllUsers() {
+        updateAllUsersUseCase.execute(PAGED_LIST_CONFIG)
+            .doFinally { refreshState.postValue(NotLoading) }
             .subscribe({
-                Log.i("loadUsers", "Users were loaded successfully.")
-                usersLoaded.postValue(true)
+                Log.i("loadUsers", "Users were updated successfully.")
             }, { e ->
-                Log.e("loadUsers", "Users were not loaded.")
+                Log.e("loadUsers", "Users were not updated.")
                 e.printStackTrace()
-
-                isError.postValue(true)
             })
     }
 
@@ -93,7 +61,6 @@ class ListViewModel(
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 Log.i("onItemClick", "UserEntity with id=${user.id} has been updated.")
-                dataSource.dataSource.value!!.invalidate()
             }, { e ->
                 e.printStackTrace()
             })

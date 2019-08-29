@@ -11,6 +11,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.myapplication.App
 import com.example.myapplication.databinding.ListFragmentBinding
+import com.example.myapplication.domain.Loading
+import com.example.myapplication.domain.NotLoading
+import com.example.myapplication.domain.RefreshState
 import com.example.myapplication.view.main.MainViewModel
 import kotlinx.android.synthetic.main.list_fragment.*
 import javax.inject.Inject
@@ -25,50 +28,10 @@ class ListFragment : Fragment() {
     @Inject
     lateinit var viewModelFactory: ListViewModelFactory
 
-    private lateinit var userListAdapter: UsersListAdapter
-    private lateinit var userListPagedAdapter: UsersListPagedAdapter
+    private lateinit var usersListAdapter: UsersListAdapter
     private lateinit var listViewModel: ListViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding: ListFragmentBinding
-
-    private val usersObserver = Observer<Boolean> { usersLoaded ->
-        if (usersLoaded) {
-            listViewModel.users.subscribe({ users ->
-                userListAdapter.updateAll(users)
-            }, {
-                it.printStackTrace()
-            })
-        }
-    }
-
-    private val usersPagedObserver = Observer<Boolean> { usersLoaded ->
-        if (usersLoaded) {
-            Log.e("TAG", "usersLoaded")
-            listViewModel.usersPaged.subscribe({ users ->
-                Log.e("NEW", users.size.toString())
-                userListPagedAdapter.submitList(null)
-                userListPagedAdapter.submitList(users)
-            }, {
-                it.printStackTrace()
-            })
-        }
-    }
-
-    private val usersPagedByNameObserver = Observer<Boolean> { usersLoaded ->
-        if (usersLoaded) {
-            Log.e("TAG", "usersLoaded")
-            listViewModel.usersPagedByName.observe(this, Observer { users ->
-                Log.e("NEW", users.size.toString())
-                userListPagedAdapter.submitList(users)
-            })
-        }
-    }
-
-    private val isLoadingObserver = Observer<Boolean> { isLoading ->
-        if (isLoading.not()) {
-            mainViewModel.isRefreshing.postValue(false)
-        }
-    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -91,25 +54,30 @@ class ListFragment : Fragment() {
         mainViewModel = ViewModelProviders.of(activity!!)[MainViewModel::class.java]
 
         binding.viewModel = listViewModel
-        userListAdapter = UsersListAdapter(listViewModel)
-        userListPagedAdapter = UsersListPagedAdapter(listViewModel)
-        //listUsers.adapter = userListAdapter
-        listUsers.adapter = userListPagedAdapter
+        usersListAdapter = UsersListAdapter(listViewModel)
+        listUsers.adapter = usersListAdapter
 
         listViewModel.apply {
-            //usersLoaded.observe(this@ListFragment, usersObserver)
-            //usersLoaded.observe(this@ListFragment, usersPagedObserver)
-            usersLoaded.observe(this@ListFragment, usersPagedByNameObserver)
+           users.observe(this@ListFragment, Observer { users ->
+                Log.e("ListFragment", "users size: ${users.size}")
+                usersListAdapter.submitList(users)
+            })
 
-            isLoading.observe(this@ListFragment, isLoadingObserver)
+            networkState.observe(this@ListFragment, Observer { networkState ->
+                usersListAdapter.setNetworkState(networkState)
+            })
 
-            loadAllUsers()
+            refreshState.observe(this@ListFragment, Observer { refreshState ->
+                if (refreshState == NotLoading) {
+                    mainViewModel.refreshState.postValue(NotLoading)
+                }
+            })
         }
 
         mainViewModel.apply {
-            isRefreshing.observe(this@ListFragment, Observer<Boolean> { isRefreshing ->
-                if (isRefreshing) {
-                    listViewModel.loadAllUsers()
+            refreshState.observe(this@ListFragment, Observer<RefreshState> { refreshState ->
+                if (refreshState == Loading) {
+                    listViewModel.updateAllUsers()
                 }
             })
         }

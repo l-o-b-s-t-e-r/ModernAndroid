@@ -31,6 +31,6 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideLocalRepository(db: AppDatabase): ILocalRepository =
-        LocalRepository(db)
+    fun provideLocalRepository(db: AppDatabase, remoteRepository: IRemoteRepository): ILocalRepository =
+        LocalRepository(db, remoteRepository)
 }

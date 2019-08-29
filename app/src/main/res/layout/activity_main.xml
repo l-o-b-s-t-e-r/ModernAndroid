@@ -14,7 +14,7 @@
         android:id="@+id/swipeToRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:refreshing="@{viewModel.isRefreshing}"
+        app:refresh_state="@{viewModel.refreshState}"
         app:onRefreshListener="@{() -> viewModel.onRefresh()}">
 
         <androidx.constraintlayout.widget.ConstraintLayout

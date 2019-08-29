@@ -13,13 +13,13 @@ import io.reactivex.Flowable
 interface UserDao {
 
     @Query("SELECT * FROM users ORDER BY name ASC")
-    fun getAllPerPage(): DataSource.Factory<Int, UserEntity>
+    fun getAllOrderByName(): DataSource.Factory<Int, UserEntity>
 
     @Query("SELECT * FROM users")
     fun getAll(): Flowable<List<UserEntity>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun saveAll(users: List<UserEntity>): Completable
+    fun saveAll(users: List<UserEntity>)
 
     @Query("UPDATE users SET color = :color WHERE id = :id")
     fun updateColor(id: String, color: Int): Completable
@@ -30,4 +30,6 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE name > :userKey ORDER BY name ASC limit :count")
     fun getAfterWithLimit(userKey: String, count: Int): List<UserEntity>
 
+    @Query("DELETE FROM users")
+    fun deleteAll()
 }

@@ -2,74 +2,123 @@ package com.example.myapplication.view.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.BR
 import com.example.myapplication.R
+import com.example.myapplication.databinding.ItemFemaleBinding
+import com.example.myapplication.databinding.ItemMaleBinding
+import com.example.myapplication.databinding.ItemProgressBinding
+import com.example.myapplication.domain.NetworkState
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
 import com.example.myapplication.domain.entities.UserEntity
 
 
-class UsersListAdapter(private val listeners: ListViewListeners) : RecyclerView.Adapter<UsersListAdapter.ViewHolder>() {
+class UsersListAdapter(private val listeners: ListViewListeners) :
+    PagedListAdapter<UserEntity, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
-    private inner class DiffCallback(
-        private val oldUsers: List<UserEntity>,
-        private val newUsers: List<UserEntity>
-    ) :
-        DiffUtil.Callback() {
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            oldUsers[oldItemPosition].id == newUsers[newItemPosition].id
+    private var networkState: NetworkState? = null
 
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            oldUsers[oldItemPosition] == newUsers[newItemPosition]
+    companion object {
+        private val DIFF_CALLBACK = object :
+            DiffUtil.ItemCallback<UserEntity>() {
+            override fun areItemsTheSame(
+                oldUser: UserEntity,
+                newUser: UserEntity
+            ) = oldUser.id == newUser.id
 
-        override fun getOldListSize() = oldUsers.size
-
-        override fun getNewListSize() = newUsers.size
-
-        override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-            return super.getChangePayload(oldItemPosition, newItemPosition)
+            override fun areContentsTheSame(
+                oldUser: UserEntity,
+                newUser: UserEntity
+            ) = oldUser == newUser
         }
     }
 
-    var users: MutableList<UserEntity> = mutableListOf()
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(
-            DataBindingUtil.inflate(LayoutInflater.from(parent.context), viewType, parent, false)
-        )
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(users[position])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            R.layout.item_male -> UserViewHolder(
+                ItemMaleBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+            R.layout.item_female -> UserViewHolder(
+                ItemFemaleBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+            R.layout.item_progress -> NetworkStateViewHolder(
+                ItemProgressBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+            else -> throw IllegalArgumentException("unknown view type $viewType")
+        }
     }
 
-    override fun getItemCount(): Int {
-        return users.size
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is UserViewHolder -> holder.bind(getItem(position))
+            is NetworkStateViewHolder -> holder.bind()
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (users[position].gender) {
-            is Male -> R.layout.item_male
-            is Female -> R.layout.item_female
+        return if (hasExtraRow() && position == itemCount - 1) {
+            R.layout.item_progress
+        } else {
+            when (getItem(position)!!.gender) {
+                is Male -> R.layout.item_male
+                is Female -> R.layout.item_female
+            }
         }
     }
 
-    fun updateAll(newUsers: List<UserEntity>) {
-        val diff = DiffUtil.calculateDiff(DiffCallback(users, newUsers))
-        users.clear()
-        users.addAll(newUsers)
-        diff.dispatchUpdatesTo(this)
+    override fun getItemCount(): Int {
+        return super.getItemCount() + if (hasExtraRow()) 1 else 0
     }
 
-    inner class ViewHolder(private val binding: ViewDataBinding) :
+    private fun hasExtraRow() = networkState != null && networkState != NetworkState.LOADED
+
+    fun setNetworkState(newNetworkState: NetworkState?) {
+        val previousState = this.networkState
+        val hadExtraRow = hasExtraRow()
+        this.networkState = newNetworkState
+        val hasExtraRow = hasExtraRow()
+        if (hadExtraRow != hasExtraRow) {
+            if (hadExtraRow) {
+                notifyItemRemoved(super.getItemCount())
+            } else {
+                notifyItemInserted(super.getItemCount())
+            }
+        } else if (hasExtraRow && previousState != newNetworkState) {
+            notifyItemChanged(itemCount - 1)
+        }
+    }
+
+    inner class UserViewHolder(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(obj: Any) {
+        fun bind(user: UserEntity?) {
             binding.apply {
-                setVariable(BR.user, obj)
+                setVariable(BR.user, user)
                 setVariable(BR.actionListener, listeners)
+                executePendingBindings()
+            }
+        }
+    }
+
+    inner class NetworkStateViewHolder(private val binding: ItemProgressBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind() {
+            binding.apply {
                 executePendingBindings()
             }
         }

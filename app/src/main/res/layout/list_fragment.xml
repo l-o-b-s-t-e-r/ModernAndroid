@@ -24,26 +24,17 @@
             tools:itemCount="4"
             tools:listitem="@layout/item_female" />
 
-        <ProgressBar
-            android:id="@+id/spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:isVisible="@{viewModel.isLoading()}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageView
             android:id="@+id/imgError"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:src="@drawable/ic_error"
-            app:isVisible="@{viewModel.isError()}"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <!--app:isVisible="@{viewModel.isError()}"-->
 
         <TextView
             android:id="@+id/txtListIsEmpty"
@@ -51,13 +42,14 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_error"
             android:text="List is empty :("
-            android:textStyle="bold"
             android:textSize="@dimen/text_size_xxl"
-            app:isVisible="@{viewModel.isUsersListEmpty()}"
+            android:textStyle="bold"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <!--app:isVisible="@{viewModel.isUsersListEmpty()}"-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
