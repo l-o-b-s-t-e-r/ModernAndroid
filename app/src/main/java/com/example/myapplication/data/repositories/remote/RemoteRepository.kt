@@ -7,7 +7,7 @@ import com.example.myapplication.domain.entities.UserEntity
 class RemoteRepository : IRemoteRepository {
 
     override fun getAllUsersWithLimit(count: Int): List<UserEntity> {
-        return users.subList(0, count)
+        return sortedUsers.subList(0, count)
     }
 
     override fun getAllUsersAfterWithLimit(userKey: String, count: Int): List<UserEntity> {

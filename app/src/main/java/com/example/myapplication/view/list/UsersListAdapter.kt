@@ -11,16 +11,21 @@ import com.example.myapplication.R
 import com.example.myapplication.databinding.ItemFemaleBinding
 import com.example.myapplication.databinding.ItemMaleBinding
 import com.example.myapplication.databinding.ItemProgressBinding
+import com.example.myapplication.domain.Event
+import com.example.myapplication.domain.EventType
 import com.example.myapplication.domain.NetworkState
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
 import com.example.myapplication.domain.entities.UserEntity
+import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.item_female.view.*
 
 
-class UsersListAdapter(private val listeners: ListViewListeners) :
+class UsersListAdapter() :
     PagedListAdapter<UserEntity, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     private var networkState: NetworkState? = null
+    var eventListener: PublishSubject<Event>? = null
 
     companion object {
         private val DIFF_CALLBACK = object :
@@ -109,7 +114,12 @@ class UsersListAdapter(private val listeners: ListViewListeners) :
         fun bind(user: UserEntity?) {
             binding.apply {
                 setVariable(BR.user, user)
-                setVariable(BR.actionListener, listeners)
+                itemView.setOnClickListener {
+                    eventListener?.onNext(Event(EventType.ITEM_CLICK, user))
+                }
+                itemView.icon_gender.setOnClickListener {
+                    eventListener?.onNext(Event(EventType.ICON_CLICK, user))
+                }
                 executePendingBindings()
             }
         }

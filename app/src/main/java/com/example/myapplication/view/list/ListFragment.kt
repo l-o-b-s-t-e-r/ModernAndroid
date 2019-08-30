@@ -54,7 +54,8 @@ class ListFragment : Fragment() {
         mainViewModel = ViewModelProviders.of(activity!!)[MainViewModel::class.java]
 
         binding.viewModel = listViewModel
-        usersListAdapter = UsersListAdapter(listViewModel)
+        usersListAdapter = UsersListAdapter()
+        usersListAdapter.eventListener = listViewModel.eventListener
         listUsers.adapter = usersListAdapter
 
         listViewModel.apply {
@@ -72,6 +73,8 @@ class ListFragment : Fragment() {
                     mainViewModel.refreshState.postValue(NotLoading)
                 }
             })
+
+            startListenEvents()
         }
 
         mainViewModel.apply {

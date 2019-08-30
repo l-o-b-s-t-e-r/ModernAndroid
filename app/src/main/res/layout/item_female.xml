@@ -7,21 +7,17 @@
         <variable
             name="user"
             type="com.example.myapplication.domain.entities.UserEntity" />
-
-        <variable
-            name="actionListener"
-            type="com.example.myapplication.view.list.ListViewListeners" />
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/item_height"
         android:layout_margin="@dimen/margin_xl"
-        android:onClick="@{()->actionListener.onItemClick(user)}"
+        android:background="@{user.color}"
         android:orientation="vertical"
         android:padding="@dimen/padding_xl"
-        android:background="@{user.color}"
         tools:showIn="@layout/list_fragment">
+        <!--android:onClick="@{()->actionListener.onItemClick(user)}"-->
 
         <ImageView
             android:id="@+id/icon_gender"
@@ -29,7 +25,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="@dimen/padding_xxxl"
             android:src="@drawable/ic_female" />
+        <!--android:onClick="@{()->actionListener.onIconClick(user)}"-->
 
         <TextView
             android:layout_width="wrap_content"
