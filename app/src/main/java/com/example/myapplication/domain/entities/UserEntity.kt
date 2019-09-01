@@ -15,5 +15,7 @@ data class UserEntity(
     @ColumnInfo(name = "gender")
     val gender: Gender,
     @ColumnInfo(name = "color")
-    val color: Int = -1
+    val color: Int = -1,
+    @ColumnInfo(name = "is_visible")
+    val isVisible: Boolean = true
 )

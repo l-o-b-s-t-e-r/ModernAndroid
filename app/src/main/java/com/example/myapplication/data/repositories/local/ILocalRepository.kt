@@ -28,4 +28,11 @@ interface ILocalRepository {
 
     fun getAllUsersPerPage(config: PagedList.Config, networkState: MutableLiveData<NetworkState>): LiveData<PagedList<UserDto>>
 
+    fun deleteUserById(id: String): Completable
+
+    fun deleteFirstUser(): Completable
+
+    fun showLastUser(): Completable
+
+    fun hideFirstUser(): Completable
 }

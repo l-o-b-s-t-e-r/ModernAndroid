@@ -70,4 +70,20 @@ class LocalRepository(
         ).setBoundaryCallback(boundaryCallback)
             .build()
     }
+
+    override fun deleteUserById(id: String): Completable {
+        return db.userDao().deleteById(id)
+    }
+
+    override fun deleteFirstUser(): Completable {
+        return db.userDao().deleteFirst()
+    }
+
+    override fun showLastUser(): Completable {
+        return db.userDao().showLast()
+    }
+
+    override fun hideFirstUser(): Completable {
+        return db.userDao().hideFirst()
+    }
 }

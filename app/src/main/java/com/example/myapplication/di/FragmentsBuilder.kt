@@ -1,5 +1,7 @@
 package com.example.myapplication.di
 
+import com.example.myapplication.view.details.DetailsFragment
+import com.example.myapplication.view.details.di.DetailsFragmentComponent
 import com.example.myapplication.view.list.ListFragment
 import com.example.myapplication.view.list.di.ListFragmentComponent
 import dagger.Binds
@@ -9,10 +11,15 @@ import dagger.multibindings.ClassKey
 import dagger.multibindings.IntoMap
 
 
-@Module(subcomponents = [ListFragmentComponent::class])
+@Module(subcomponents = [ListFragmentComponent::class, DetailsFragmentComponent::class])
 abstract class FragmentsBuilder {
     @Binds
     @IntoMap
+    @ClassKey(DetailsFragment::class)
+    internal abstract fun bindDetailsFragmentComponentFactory(factory: DetailsFragmentComponent.Factory): AndroidInjector.Factory<*>
+
+    @Binds
+    @IntoMap
     @ClassKey(ListFragment::class)
-    internal abstract fun bindAndroidInjectorFactory(factory: ListFragmentComponent.Factory): AndroidInjector.Factory<*>
+    internal abstract fun bindListFragmentComponentFactory(factory: ListFragmentComponent.Factory): AndroidInjector.Factory<*>
 }

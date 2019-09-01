@@ -24,5 +24,5 @@
     <dimen name="padding_xxl">12dp</dimen>
     <dimen name="padding_xxxl">14dp</dimen>
 
-    <dimen name="item_height">200dp</dimen>
+    <dimen name="item_height">100dp</dimen>
 </resources>

@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.myapplication.data.dao.UserDao
 import com.example.myapplication.domain.entities.UserEntity
 
-@Database(entities = arrayOf(UserEntity::class), version = 2)
+@Database(entities = arrayOf(UserEntity::class), version = 3)
 @TypeConverters(value = [DateTypeConverter::class])
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
@@ -16,7 +16,13 @@ abstract class AppDatabase : RoomDatabase() {
     companion object Migrations {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE user ADD COLUMN color INTEGER NOT NULL DEFAULT(-1)")
+                database.execSQL("ALTER TABLE users ADD COLUMN color INTEGER NOT NULL DEFAULT(-1)")
+            }
+        }
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE users ADD COLUMN is_visible INTEGER NOT NULL DEFAULT(1)")
             }
         }
     }
