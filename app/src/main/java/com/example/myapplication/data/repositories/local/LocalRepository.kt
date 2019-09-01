@@ -9,13 +9,16 @@ import com.example.myapplication.data.UserBoundaryCallback
 import com.example.myapplication.data.db.AppDatabase
 import com.example.myapplication.data.repositories.remote.IRemoteRepository
 import com.example.myapplication.domain.NetworkState
+import com.example.myapplication.domain.UserMapper
+import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.UserEntity
 import io.reactivex.Completable
 import io.reactivex.Flowable
 
 class LocalRepository(
     private val db: AppDatabase,
-    private val remoteRepository: IRemoteRepository
+    private val remoteRepository: IRemoteRepository,
+    private val userMapper: UserMapper
 ) : ILocalRepository {
 
     override fun getAllUsersPerPage(): DataSource.Factory<Int, UserEntity> {
@@ -49,16 +52,22 @@ class LocalRepository(
         return db.userDao().getAfterWithLimit(userKey, count)
     }
 
-    override fun getAllUsersPerPage(config: PagedList.Config, networkState: MutableLiveData<NetworkState>): LiveData<PagedList<UserEntity>> {
+    override fun getAllUsersPerPage(
+        config: PagedList.Config,
+        networkState: MutableLiveData<NetworkState>
+    ): LiveData<PagedList<UserDto>> {
         val boundaryCallback = UserBoundaryCallback(
             saveResponse = this::saveAllUsers,
             remoteRepository = remoteRepository,
             config = config,
-            networkState = networkState
+            networkState = networkState,
+            userMapper = userMapper
         )
 
-        return LivePagedListBuilder(db.userDao().getAllOrderByName(), config)
-            .setBoundaryCallback(boundaryCallback)
+        return LivePagedListBuilder(
+            db.userDao().getAllOrderByName().map { userMapper.toDto(it) },
+            config
+        ).setBoundaryCallback(boundaryCallback)
             .build()
     }
 }

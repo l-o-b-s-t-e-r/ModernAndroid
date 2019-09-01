@@ -8,6 +8,7 @@ import com.example.myapplication.data.repositories.local.ILocalRepository
 import com.example.myapplication.data.repositories.local.LocalRepository
 import com.example.myapplication.data.repositories.remote.IRemoteRepository
 import com.example.myapplication.data.repositories.remote.RemoteRepository
+import com.example.myapplication.domain.UserMapper
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -31,6 +32,6 @@ class DataModule {
 
     @Provides
     @Singleton
-    fun provideLocalRepository(db: AppDatabase, remoteRepository: IRemoteRepository): ILocalRepository =
-        LocalRepository(db, remoteRepository)
+    fun provideLocalRepository(db: AppDatabase, remoteRepository: IRemoteRepository, userMapper: UserMapper): ILocalRepository =
+        LocalRepository(db, remoteRepository, userMapper)
 }

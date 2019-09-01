@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.example.myapplication.domain.*
-import com.example.myapplication.domain.entities.UserEntity
+import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.usecases.GetAllUsersPerPageUseCase
 import com.example.myapplication.domain.usecases.UpdateAllUsersUseCase
 import com.example.myapplication.domain.usecases.UpdateUserColorUseCase
@@ -37,7 +37,7 @@ class ListViewModel(
 
     val refreshState = MutableLiveData<RefreshState>()
 
-    val users: LiveData<PagedList<UserEntity>> by lazy {
+    val users: LiveData<PagedList<UserDto>> by lazy {
         getAllUsersPerPage(PAGED_LIST_CONFIG)
     }
 
@@ -45,12 +45,12 @@ class ListViewModel(
         eventDisposable = eventListener.subscribe { event ->
             when (event.type) {
                 EventType.ITEM_CLICK -> {
-                    if (event.obj is UserEntity) {
+                    if (event.obj is UserDto) {
                         onItemClick(event.obj)
                     }
                 }
                 EventType.ICON_CLICK -> {
-                    if (event.obj is UserEntity) {
+                    if (event.obj is UserDto) {
                         onIconClick(event.obj)
                     }
                 }
@@ -58,7 +58,7 @@ class ListViewModel(
         }
     }
 
-    private fun getAllUsersPerPage(config: PagedList.Config): LiveData<PagedList<UserEntity>> {
+    private fun getAllUsersPerPage(config: PagedList.Config): LiveData<PagedList<UserDto>> {
         return getAllUsersPerPageUseCase.execute(config, networkState)
     }
 
@@ -75,7 +75,7 @@ class ListViewModel(
     }
 
     @SuppressLint("CheckResult")
-    private fun onItemClick(user: UserEntity) {
+    private fun onItemClick(user: UserDto) {
         updateUserColorUseCase.execute(user, randomColor())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -87,7 +87,7 @@ class ListViewModel(
     }
 
     @SuppressLint("CheckResult")
-    private fun onIconClick(user: UserEntity) {
+    private fun onIconClick(user: UserDto) {
         updateUserColorUseCase.execute(user, -1)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

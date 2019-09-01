@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import androidx.paging.PagedList
 import com.example.myapplication.domain.NetworkState
+import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.UserEntity
 import io.reactivex.Completable
 import io.reactivex.Flowable
@@ -25,6 +26,6 @@ interface ILocalRepository {
 
     fun getAllUsersAfterWithLimit(userKey: String, count: Int): List<UserEntity>
 
-    fun getAllUsersPerPage(config: PagedList.Config, networkState: MutableLiveData<NetworkState>): LiveData<PagedList<UserEntity>>
+    fun getAllUsersPerPage(config: PagedList.Config, networkState: MutableLiveData<NetworkState>): LiveData<PagedList<UserDto>>
 
 }

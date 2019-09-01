@@ -14,29 +14,29 @@ import com.example.myapplication.databinding.ItemProgressBinding
 import com.example.myapplication.domain.Event
 import com.example.myapplication.domain.EventType
 import com.example.myapplication.domain.NetworkState
+import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
-import com.example.myapplication.domain.entities.UserEntity
 import kotlinx.android.synthetic.main.item_female.view.*
 import javax.inject.Inject
 
 
 class UsersListAdapter @Inject constructor(private val viewModel: ListViewModel) :
-    PagedListAdapter<UserEntity, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+    PagedListAdapter<UserDto, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     private var networkState: NetworkState? = null
 
     companion object {
         private val DIFF_CALLBACK = object :
-            DiffUtil.ItemCallback<UserEntity>() {
+            DiffUtil.ItemCallback<UserDto>() {
             override fun areItemsTheSame(
-                oldUser: UserEntity,
-                newUser: UserEntity
+                oldUser: UserDto,
+                newUser: UserDto
             ) = oldUser.id == newUser.id
 
             override fun areContentsTheSame(
-                oldUser: UserEntity,
-                newUser: UserEntity
+                oldUser: UserDto,
+                newUser: UserDto
             ) = oldUser == newUser
         }
     }
@@ -110,7 +110,7 @@ class UsersListAdapter @Inject constructor(private val viewModel: ListViewModel)
 
     inner class UserViewHolder(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(user: UserEntity?) {
+        fun bind(user: UserDto?) {
             binding.apply {
                 setVariable(BR.user, user)
                 itemView.setOnClickListener {

@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.example.myapplication.data.repositories.remote.IRemoteRepository
 import com.example.myapplication.domain.NetworkState
+import com.example.myapplication.domain.UserMapper
+import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.UserEntity
 import io.reactivex.Completable
 import io.reactivex.schedulers.Schedulers
@@ -15,8 +17,9 @@ class UserBoundaryCallback(
     private val saveResponse: (List<UserEntity>) -> Unit,
     private val remoteRepository: IRemoteRepository,
     private val config: PagedList.Config,
-    private val networkState: MutableLiveData<NetworkState>
-) : PagedList.BoundaryCallback<UserEntity>() {
+    private val networkState: MutableLiveData<NetworkState>,
+    private val userMapper: UserMapper
+) : PagedList.BoundaryCallback<UserDto>() {
 
     @SuppressLint("CheckResult")
     override fun onZeroItemsLoaded() {
@@ -28,7 +31,7 @@ class UserBoundaryCallback(
             .subscribe({
                 Log.e("UserBoundaryCallback", "onZeroItemsLoaded")
                 val response = remoteRepository.getAllUsersWithLimit(config.initialLoadSizeHint)
-                saveResponse(response)
+                saveResponse(response.map { userMapper.toEntity(it) })
                 networkState.postValue(NetworkState.LOADED)
             },{
                 it.printStackTrace()
@@ -37,7 +40,7 @@ class UserBoundaryCallback(
     }
 
     @SuppressLint("CheckResult")
-    override fun onItemAtEndLoaded(itemAtEnd: UserEntity) {
+    override fun onItemAtEndLoaded(itemAtEnd: UserDto) {
         Log.e("UserBoundaryCallback", "onItemAtEndLoaded ${itemAtEnd.name}")
         networkState.postValue(NetworkState.LOADING)
         Completable.complete()
@@ -46,7 +49,7 @@ class UserBoundaryCallback(
             .subscribe({
                 Log.e("UserBoundaryCallback", "onItemAtEndLoaded")
                 val response = remoteRepository.getAllUsersAfterWithLimit(itemAtEnd.name, config.pageSize)
-                saveResponse(response)
+                saveResponse(response.map { userMapper.toEntity(it) })
                 networkState.postValue(NetworkState.LOADED)
             },{
                 it.printStackTrace()

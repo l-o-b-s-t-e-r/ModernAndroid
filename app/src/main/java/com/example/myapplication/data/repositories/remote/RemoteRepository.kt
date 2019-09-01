@@ -1,16 +1,16 @@
 package com.example.myapplication.data.repositories.remote
 
+import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
-import com.example.myapplication.domain.entities.UserEntity
 
 class RemoteRepository : IRemoteRepository {
 
-    override fun getAllUsersWithLimit(count: Int): List<UserEntity> {
+    override fun getAllUsersWithLimit(count: Int): List<UserDto> {
         return sortedUsers.subList(0, count)
     }
 
-    override fun getAllUsersAfterWithLimit(userKey: String, count: Int): List<UserEntity> {
+    override fun getAllUsersAfterWithLimit(userKey: String, count: Int): List<UserDto> {
         sortedUsers.forEachIndexed { index, user ->
             if (user.name == userKey) {
                 val toIndex = index + count
@@ -21,507 +21,507 @@ class RemoteRepository : IRemoteRepository {
         throw ClassNotFoundException()
     }
 
-    val sortedUsers: List<UserEntity> by lazy {
+    val sortedUsers: List<UserDto> by lazy {
         users.sortedBy { it.name }
     }
 
     val users = listOf(
-        UserEntity(
+        UserDto(
             "93",
             "Lucile",
             Female
         ),
-        UserEntity(
+        UserDto(
             "42",
             "Jordan",
             Male
         ),
-        UserEntity(
+        UserDto(
             "86",
             "Beatriz",
             Female
         ),
-        UserEntity(
+        UserDto(
             "61",
             "Emmaline",
             Female
         ),
-        UserEntity(
+        UserDto(
             "31",
             "Arthur",
             Male
         ),
-        UserEntity(
+        UserDto(
             "47",
             "Mohammad",
             Male
         ),
-        UserEntity(
+        UserDto(
             "38",
             "Brandon",
             Male
         ),
-        UserEntity(
+        UserDto(
             "19",
             "Buster",
             Male
         ),
-        UserEntity(
+        UserDto(
             "16",
             "Chas",
             Male
         ),
-        UserEntity(
+        UserDto(
             "34",
             "Quinton",
             Male
         ),
-        UserEntity(
+        UserDto(
             "48",
             "Bertram",
             Male
         ),
-        UserEntity(
+        UserDto(
             "17",
             "Marcos",
             Male
         ),
-        UserEntity(
+        UserDto(
             "6",
             "Weldon",
             Male
         ),
-        UserEntity(
+        UserDto(
             "37",
             "Rogelio",
             Male
         ),
-        UserEntity(
+        UserDto(
             "24",
             "Samual",
             Male
         ),
-        UserEntity(
+        UserDto(
             "77",
             "Colette",
             Female
         ),
-        UserEntity(
+        UserDto(
             "50",
             "Page",
             Female
         ),
-        UserEntity(
+        UserDto(
             "71",
             "Mee",
             Female
         ),
-        UserEntity(
+        UserDto(
             "65",
             "Alta",
             Female
         ),
-        UserEntity(
+        UserDto(
             "79",
             "Liana",
             Female
         ),
-        UserEntity(
+        UserDto(
             "43",
             "Mario",
             Male
         ),
-        UserEntity(
+        UserDto(
             "60",
             "Eun",
             Female
         ),
-        UserEntity(
+        UserDto(
             "56",
             "Carmelina",
             Female
         ),
-        UserEntity(
+        UserDto(
             "45",
             "Bernard",
             Male
         ),
-        UserEntity(
+        UserDto(
             "15",
             "Keenan",
             Male
         ),
-        UserEntity(
+        UserDto(
             "92",
             "Darci",
             Female
         ),
-        UserEntity(
+        UserDto(
             "41",
             "Dalton",
             Male
         ),
-        UserEntity(
+        UserDto(
             "69",
             "Phoebe",
             Female
         ),
-        UserEntity(
+        UserDto(
             "4",
             "Kim",
             Male
         ),
-        UserEntity(
+        UserDto(
             "51",
             "Analisa",
             Female
         ),
-        UserEntity(
+        UserDto(
             "63",
             "Yon",
             Female
         ),
-        UserEntity(
+        UserDto(
             "78",
             "Maura",
             Female
         ),
-        UserEntity(
+        UserDto(
             "82",
             "Tanna",
             Female
         ),
-        UserEntity(
+        UserDto(
             "30",
             "Bennett",
             Male
         ),
-        UserEntity(
+        UserDto(
             "3",
             "Alvin",
             Male
         ),
-        UserEntity(
+        UserDto(
             "80",
             "Aide",
             Female
         ),
-        UserEntity(
+        UserDto(
             "76",
             "Regine",
             Female
         ),
-        UserEntity(
+        UserDto(
             "52",
             "Isela",
             Female
         ),
-        UserEntity(
+        UserDto(
             "55",
             "Myong",
             Female
         ),
-        UserEntity(
+        UserDto(
             "11",
             "Basil",
             Male
         ),
-        UserEntity(
+        UserDto(
             "5",
             "Emerson",
             Male
         ),
-        UserEntity(
+        UserDto(
             "58",
             "Angila",
             Female
         ),
-        UserEntity(
+        UserDto(
             "64",
             "Joanie",
             Female
         ),
-        UserEntity(
+        UserDto(
             "0",
             "Damion",
             Male
         ),
-        UserEntity(
+        UserDto(
             "68",
             "Maia",
             Female
         ),
-        UserEntity(
+        UserDto(
             "87",
             "Carla",
             Female
         ),
-        UserEntity(
+        UserDto(
             "54",
             "Lajuana",
             Female
         ),
-        UserEntity(
+        UserDto(
             "33",
             "Newton",
             Male
         ),
-        UserEntity(
+        UserDto(
             "96",
             "Georgianna",
             Female
         ),
-        UserEntity(
+        UserDto(
             "49",
             "Anton",
             Male
         ),
-        UserEntity(
+        UserDto(
             "32",
             "Dewayne",
             Male
         ),
-        UserEntity(
+        UserDto(
             "95",
             "Aline",
             Female
         ),
-        UserEntity(
+        UserDto(
             "73",
             "Emogene",
             Female
         ),
-        UserEntity(
+        UserDto(
             "94",
             "Allyn",
             Female
         ),
-        UserEntity(
+        UserDto(
             "23",
             "Claud",
             Male
         ),
-        UserEntity(
+        UserDto(
             "9",
             "Harvey",
             Male
         ),
-        UserEntity(
+        UserDto(
             "97",
             "Marianne",
             Female
         ),
-        UserEntity(
+        UserDto(
             "88",
             "Rosa",
             Female
         ),
-        UserEntity(
+        UserDto(
             "39",
             "Patricia",
             Male
         ),
-        UserEntity(
+        UserDto(
             "70",
             "Catrina",
             Female
         ),
-        UserEntity(
+        UserDto(
             "66",
             "Mathilde",
             Female
         ),
-        UserEntity(
+        UserDto(
             "36",
             "Tracy",
             Male
         ),
-        UserEntity(
+        UserDto(
             "14",
             "Zachary",
             Male
         ),
-        UserEntity(
+        UserDto(
             "46",
             "Reynaldo",
             Male
         ),
-        UserEntity(
+        UserDto(
             "40",
             "Dewey",
             Male
         ),
-        UserEntity(
+        UserDto(
             "67",
             "Jayme",
             Female
         ),
-        UserEntity(
+        UserDto(
             "62",
             "Melania",
             Female
         ),
-        UserEntity(
+        UserDto(
             "81",
             "Yolando",
             Female
         ),
-        UserEntity(
+        UserDto(
             "27",
             "Richard",
             Male
         ),
-        UserEntity(
+        UserDto(
             "12",
             "Francis",
             Male
         ),
-        UserEntity(
+        UserDto(
             "28",
             "Cleveland",
             Male
         ),
-        UserEntity(
+        UserDto(
             "75",
             "Jacqueline",
             Female
         ),
-        UserEntity(
+        UserDto(
             "53",
             "Shaina",
             Female
         ),
-        UserEntity(
+        UserDto(
             "22",
             "Samuel",
             Male
         ),
-        UserEntity(
+        UserDto(
             "99",
             "Daniella",
             Female
         ),
-        UserEntity(
+        UserDto(
             "29",
             "Jake",
             Male
         ),
-        UserEntity(
+        UserDto(
             "89",
             "Lorrine",
             Female
         ),
-        UserEntity(
+        UserDto(
             "26",
             "Sanford",
             Male
         ),
-        UserEntity(
+        UserDto(
             "91",
             "Verla",
             Female
         ),
-        UserEntity(
+        UserDto(
             "1",
             "Otto",
             Male
         ),
-        UserEntity(
+        UserDto(
             "10",
             "Eugenio",
             Male
         ),
-        UserEntity(
+        UserDto(
             "57",
             "Nicki",
             Female
         ),
-        UserEntity(
+        UserDto(
             "98",
             "Sharyn",
             Female
         ),
-        UserEntity(
+        UserDto(
             "90",
             "Carmelita",
             Female
         ),
-        UserEntity(
+        UserDto(
             "25",
             "Colby",
             Male
         ),
-        UserEntity(
+        UserDto(
             "21",
             "Prince",
             Male
         ),
-        UserEntity(
+        UserDto(
             "84",
             "Lavada",
             Female
         ),
-        UserEntity(
+        UserDto(
             "13",
             "Bryce",
             Male
         ),
-        UserEntity(
+        UserDto(
             "74",
             "Sophie",
             Female
         ),
-        UserEntity(
+        UserDto(
             "59",
             "Amanda",
             Female
         ),
-        UserEntity(
+        UserDto(
             "20",
             "Sid",
             Male
         ),
-        UserEntity(
+        UserDto(
             "7",
             "Ali",
             Male
         ),
-        UserEntity(
+        UserDto(
             "8",
             "Ferdinand",
             Male
         ),
-        UserEntity(
+        UserDto(
             "18",
             "Thad",
             Male
         ),
-        UserEntity(
+        UserDto(
             "2",
             "Brock",
             Male
         ),
-        UserEntity(
+        UserDto(
             "72",
             "Erica",
             Female
         ),
-        UserEntity(
+        UserDto(
             "83",
             "Mathilda",
             Female
         ),
-        UserEntity(
+        UserDto(
             "44",
             "Irving",
             Male
         ),
-        UserEntity(
+        UserDto(
             "35",
             "Mohamed",
             Male
         ),
-        UserEntity(
+        UserDto(
             "85",
             "Deadra",
             Female
