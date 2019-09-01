@@ -2,21 +2,31 @@ package com.example.myapplication
 
 import android.app.Application
 import com.example.myapplication.di.AppComponent
-import com.example.myapplication.di.AppModule
 import com.example.myapplication.di.DaggerAppComponent
-import com.example.myapplication.di.DataModule
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasAndroidInjector
+import javax.inject.Inject
 
-class App : Application() {
+class App : Application(), HasAndroidInjector {
 
     companion object {
         lateinit var appComponent: AppComponent
     }
 
+    @set:Inject
+    internal lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent.builder()
-            .appModule(AppModule(this))
-            .dataModule(DataModule())
+            .application(this)
             .build()
+
+        appComponent.inject(this)
+    }
+
+    override fun androidInjector(): AndroidInjector<Any> {
+        return dispatchingAndroidInjector
     }
 }

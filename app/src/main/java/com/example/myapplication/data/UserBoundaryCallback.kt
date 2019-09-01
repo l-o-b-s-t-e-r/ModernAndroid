@@ -27,16 +27,13 @@ class UserBoundaryCallback(
             .observeOn(Schedulers.io())
             .subscribe({
                 Log.e("UserBoundaryCallback", "onZeroItemsLoaded")
-                saveResponse(remoteRepository.getAllUsersWithLimit(config.initialLoadSizeHint))
+                val response = remoteRepository.getAllUsersWithLimit(config.initialLoadSizeHint)
+                saveResponse(response)
                 networkState.postValue(NetworkState.LOADED)
             },{
                 it.printStackTrace()
                 networkState.postValue(NetworkState.error(it.message))
             })
-
-        /*Observable.just(remoteRepository.getAllUsersWithLimit(pageSize))
-            .delay(2, TimeUnit.SECONDS)
-            .subscribe { localRepository.saveAllUsers(it) }*/
     }
 
     @SuppressLint("CheckResult")
@@ -48,15 +45,12 @@ class UserBoundaryCallback(
             .observeOn(Schedulers.io())
             .subscribe({
                 Log.e("UserBoundaryCallback", "onItemAtEndLoaded")
-                saveResponse(remoteRepository.getAllUsersAfterWithLimit(itemAtEnd.name, config.pageSize))
+                val response = remoteRepository.getAllUsersAfterWithLimit(itemAtEnd.name, config.pageSize)
+                saveResponse(response)
                 networkState.postValue(NetworkState.LOADED)
             },{
                 it.printStackTrace()
                 networkState.postValue(NetworkState.error(it.message))
             })
-
-        /*Observable.just(remoteRepository.getAllUsersAfterWithLimit(itemAtEnd.name, pageSize))
-            .delay(2, TimeUnit.SECONDS)
-            .subscribe { localRepository.saveAllUsers(it) }*/
     }
 }

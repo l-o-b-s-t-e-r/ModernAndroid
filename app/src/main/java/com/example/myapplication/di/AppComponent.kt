@@ -1,13 +1,26 @@
 package com.example.myapplication.di
 
-import com.example.myapplication.view.list.ListFragment
+import android.app.Application
+import com.example.myapplication.App
+import dagger.BindsInstance
 import dagger.Component
+import dagger.android.AndroidInjectionModule
 import javax.inject.Singleton
 
+
 @Singleton
-@Component(modules = [AppModule::class, DataModule::class])
+@Component(modules = [AndroidInjectionModule::class, DataModule::class, ActivitiesBuilder::class])
 interface AppComponent {
 
-    fun inject(fragment: ListFragment)
+    fun inject(app: App)
 
+    @Component.Builder
+    interface Builder {
+
+        fun build(): AppComponent
+
+        @BindsInstance
+        fun application(application: Application): Builder
+
+    }
 }

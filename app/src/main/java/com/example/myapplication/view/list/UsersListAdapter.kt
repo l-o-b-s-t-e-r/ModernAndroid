@@ -17,15 +17,14 @@ import com.example.myapplication.domain.NetworkState
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
 import com.example.myapplication.domain.entities.UserEntity
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.item_female.view.*
+import javax.inject.Inject
 
 
-class UsersListAdapter() :
+class UsersListAdapter @Inject constructor(private val viewModel: ListViewModel) :
     PagedListAdapter<UserEntity, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     private var networkState: NetworkState? = null
-    var eventListener: PublishSubject<Event>? = null
 
     companion object {
         private val DIFF_CALLBACK = object :
@@ -115,10 +114,10 @@ class UsersListAdapter() :
             binding.apply {
                 setVariable(BR.user, user)
                 itemView.setOnClickListener {
-                    eventListener?.onNext(Event(EventType.ITEM_CLICK, user))
+                    viewModel.eventListener.onNext(Event(EventType.ITEM_CLICK, user))
                 }
                 itemView.icon_gender.setOnClickListener {
-                    eventListener?.onNext(Event(EventType.ICON_CLICK, user))
+                    viewModel.eventListener.onNext(Event(EventType.ICON_CLICK, user))
                 }
                 executePendingBindings()
             }
