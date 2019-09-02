@@ -67,8 +67,7 @@ class LocalRepository(
         return LivePagedListBuilder(
             db.userDao().getAllOrderByName().map { userMapper.toDto(it) },
             config
-        ).setBoundaryCallback(boundaryCallback)
-            .build()
+        ).setBoundaryCallback(boundaryCallback).build()
     }
 
     override fun deleteUserById(id: String): Completable {

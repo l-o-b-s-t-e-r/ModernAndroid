@@ -15,6 +15,9 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE is_visible = 1 ORDER BY name ASC")
     fun getAllOrderByName(): DataSource.Factory<Int, UserEntity>
 
+    @Query("SELECT * FROM users limit 0")
+    fun getNothing(): DataSource.Factory<Int, UserEntity>
+
     @Query("SELECT * FROM users")
     fun getAll(): Flowable<List<UserEntity>>
 

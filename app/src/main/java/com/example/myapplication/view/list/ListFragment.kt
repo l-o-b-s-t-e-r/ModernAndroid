@@ -2,6 +2,7 @@ package com.example.myapplication.view.list
 
 import android.os.Bundle
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.BR
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ListFragmentBinding
@@ -56,6 +57,12 @@ class ListFragment : BaseFragment<ListFragmentBinding, ListViewModel>() {
                 }
             })
         }
+
+        usersListAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver(){
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                listUsers.scrollToPosition(positionStart)
+            }
+        })
     }
 
     override fun layoutId() = R.layout.list_fragment
