@@ -60,7 +60,9 @@ class ListFragment : BaseFragment<ListFragmentBinding, ListViewModel>() {
 
         usersListAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver(){
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                listUsers.scrollToPosition(positionStart)
+                if (positionStart == 0 && itemCount == 1) {
+                    listUsers.scrollToPosition(positionStart)
+                }
             }
         })
     }

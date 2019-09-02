@@ -25,9 +25,9 @@ class ListViewModel(
 
     private val PAGED_LIST_CONFIG = PagedList.Config.Builder()
         .setEnablePlaceholders(false)
-        .setInitialLoadSizeHint(15)
-        .setPrefetchDistance(5)
-        .setPageSize(5)
+        .setInitialLoadSizeHint(20)
+        .setPrefetchDistance(3)
+        .setPageSize(10)
         .build()
 
     val eventListener = PublishSubject.create<Event>()
