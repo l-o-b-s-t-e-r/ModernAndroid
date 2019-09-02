@@ -1,6 +1,6 @@
 package com.example.myapplication.view.list.di
 
-import androidx.lifecycle.ViewModelProviders
+import com.example.myapplication.di.BaseViewModule
 import com.example.myapplication.view.list.ListFragment
 import com.example.myapplication.view.list.ListViewModel
 import com.example.myapplication.view.list.ListViewModelFactory
@@ -8,11 +8,9 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class ListFragmentModule {
+class ListFragmentModule : BaseViewModule<ListFragment, ListViewModel, ListViewModelFactory>() {
 
-   @Provides
-   fun provideListViewModel(fragment: ListFragment, viewModelFactory: ListViewModelFactory): ListViewModel {
-       return ViewModelProviders.of(fragment, viewModelFactory)[ListViewModel::class.java]
-   }
+    @Provides
+    fun provideListViewModel(fragment: ListFragment, viewModelFactory: ListViewModelFactory): ListViewModel = getViewModel(fragment, viewModelFactory)
 
 }
