@@ -21,8 +21,17 @@ class LocalRepository(
     private val userMapper: UserMapper
 ) : ILocalRepository {
 
+    override val userSearchQuery = MutableLiveData<String>().apply {
+        postValue("")
+    }
+
+    private fun getTransformedUserSearchQuery(): String {
+        val query = userSearchQuery.value ?: ""
+        return "$query%"
+    }
+
     override fun getAllUsersPerPage(): DataSource.Factory<Int, UserEntity> {
-        return db.userDao().getAllOrderByName()
+        return db.userDao().getAllUsersSortedByName()
     }
 
     override fun saveAllUsers(users: List<UserEntity>) {
@@ -61,11 +70,14 @@ class LocalRepository(
             remoteRepository = remoteRepository,
             config = config,
             networkState = networkState,
-            userMapper = userMapper
+            userMapper = userMapper,
+            query = userSearchQuery.value ?: ""
         )
 
         return LivePagedListBuilder(
-            db.userDao().getAllOrderByName().map { userMapper.toDto(it) },
+            db.userDao().getAllUsersByQuery(getTransformedUserSearchQuery()).map {
+                userMapper.toDto(it)
+            },
             config
         ).setBoundaryCallback(boundaryCallback).build()
     }
@@ -79,10 +91,10 @@ class LocalRepository(
     }
 
     override fun showLastUser(): Completable {
-        return db.userDao().showLast()
+        return db.userDao().showLast(getTransformedUserSearchQuery())
     }
 
     override fun hideFirstUser(): Completable {
-        return db.userDao().hideFirst()
+        return db.userDao().hideFirst(getTransformedUserSearchQuery())
     }
 }

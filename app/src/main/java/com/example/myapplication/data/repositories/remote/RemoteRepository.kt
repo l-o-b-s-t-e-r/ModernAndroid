@@ -3,6 +3,7 @@ package com.example.myapplication.data.repositories.remote
 import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
+import kotlin.math.min
 
 class RemoteRepository : IRemoteRepository {
 
@@ -10,11 +11,23 @@ class RemoteRepository : IRemoteRepository {
         return sortedUsers.subList(0, count)
     }
 
-    override fun getAllUsersAfterWithLimit(userKey: String, count: Int): List<UserDto> {
-        sortedUsers.forEachIndexed { index, user ->
-            if (user.name == userKey) {
-                val toIndex = index + count
-                return sortedUsers.subList(index, if (toIndex < users.size) toIndex else users.size)
+    override fun getAllUsersWithLimit(query: String, count: Int): List<UserDto> {
+        return sortedUsers.filter {
+            it.name.startsWith(query, true)
+        }.apply {
+            subList(0, min(count, size))
+        }
+    }
+
+    override fun getAllUsersAfterWithLimit(query: String, userKey: String, count: Int): List<UserDto> {
+        sortedUsers.filter {
+            it.name.startsWith(query, true)
+        }.let { filteredList ->
+            filteredList.forEachIndexed { index, user ->
+                if (user.name == userKey) {
+                    val toIndex = index + count
+                    return filteredList.subList(index, min(toIndex, filteredList.size))
+                }
             }
         }
 

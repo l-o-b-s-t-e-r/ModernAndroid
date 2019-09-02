@@ -6,6 +6,8 @@ interface IRemoteRepository {
 
     fun getAllUsersWithLimit(count: Int): List<UserDto>
 
-    fun getAllUsersAfterWithLimit(userKey: String, count: Int): List<UserDto>
+    fun getAllUsersWithLimit(query: String, count: Int): List<UserDto>
+
+    fun getAllUsersAfterWithLimit(query: String, userKey: String, count: Int): List<UserDto>
 
 }

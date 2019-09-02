@@ -12,6 +12,8 @@ import io.reactivex.Flowable
 
 interface ILocalRepository {
 
+    val userSearchQuery: MutableLiveData<String>
+
     fun getAllUsersPerPage(): DataSource.Factory<Int, UserEntity>
 
     fun getAllUsers(): Flowable<List<UserEntity>>
@@ -35,4 +37,5 @@ interface ILocalRepository {
     fun showLastUser(): Completable
 
     fun hideFirstUser(): Completable
+
 }

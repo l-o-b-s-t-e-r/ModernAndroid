@@ -12,8 +12,11 @@ import io.reactivex.Flowable
 @Dao
 interface UserDao {
 
+    @Query("SELECT * FROM users where is_visible = 1 AND name LIKE :query ORDER BY name ASC")
+    fun getAllUsersByQuery(query: String): DataSource.Factory<Int, UserEntity>
+
     @Query("SELECT * FROM users WHERE is_visible = 1 ORDER BY name ASC")
-    fun getAllOrderByName(): DataSource.Factory<Int, UserEntity>
+    fun getAllUsersSortedByName(): DataSource.Factory<Int, UserEntity>
 
     @Query("SELECT * FROM users limit 0")
     fun getNothing(): DataSource.Factory<Int, UserEntity>
@@ -42,9 +45,9 @@ interface UserDao {
     @Query("DELETE FROM users")
     fun deleteAll()
 
-    @Query("UPDATE users SET is_visible = 0 WHERE id = (SELECT id FROM users WHERE is_visible = 1 ORDER BY name ASC limit 1)")
-    fun hideFirst(): Completable
+    @Query("UPDATE users SET is_visible = 0 WHERE id = (SELECT id FROM users WHERE is_visible = 1 AND name LIKE :query ORDER BY name ASC limit 1)")
+    fun hideFirst(query: String): Completable
 
-    @Query("UPDATE users SET is_visible = 1 WHERE id = (SELECT id FROM users WHERE is_visible = 0 ORDER BY name DESC limit 1)")
-    fun showLast(): Completable
+    @Query("UPDATE users SET is_visible = 1 WHERE id = (SELECT id FROM users WHERE is_visible = 0 AND name LIKE :query ORDER BY name DESC limit 1)")
+    fun showLast(query: String): Completable
 }

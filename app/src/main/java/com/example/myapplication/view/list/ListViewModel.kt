@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.example.myapplication.domain.*
 import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.usecases.GetAllUsersPerPageUseCase
+import com.example.myapplication.domain.usecases.GetUserSearchQueryUseCase
 import com.example.myapplication.domain.usecases.UpdateAllUsersUseCase
 import com.example.myapplication.domain.usecases.UpdateUserColorUseCase
 import com.example.myapplication.randomColor
@@ -20,7 +22,8 @@ import io.reactivex.subjects.PublishSubject
 class ListViewModel(
     private val updateAllUsersUseCase: UpdateAllUsersUseCase,
     private val updateUserColorUseCase: UpdateUserColorUseCase,
-    private val getAllUsersPerPageUseCase: GetAllUsersPerPageUseCase
+    private val getAllUsersPerPageUseCase: GetAllUsersPerPageUseCase,
+    private val getUserSearchQueryUseCase: GetUserSearchQueryUseCase
 ) : ViewModel() {
 
     private val PAGED_LIST_CONFIG = PagedList.Config.Builder()
@@ -37,29 +40,16 @@ class ListViewModel(
 
     val refreshState = MutableLiveData<RefreshState>()
 
+    val searchQuery = getUserSearchQueryUseCase.execute()
+
     val users: LiveData<PagedList<UserDto>> by lazy {
         getAllUsersPerPage(PAGED_LIST_CONFIG)
     }
 
-    fun startListenEvents() {
-        eventDisposable = eventListener.subscribe { event ->
-            when (event.type) {
-                EventType.ITEM_CLICK -> {
-                    if (event.obj is UserDto) {
-                        onItemClick(event.obj)
-                    }
-                }
-                EventType.ICON_CLICK -> {
-                    if (event.obj is UserDto) {
-                        onIconClick(event.obj)
-                    }
-                }
-            }
-        }
-    }
-
     private fun getAllUsersPerPage(config: PagedList.Config): LiveData<PagedList<UserDto>> {
-        return getAllUsersPerPageUseCase.execute(config, networkState)
+        return Transformations.switchMap(searchQuery) {
+            getAllUsersPerPageUseCase.execute(config, networkState)
+        }
     }
 
     @SuppressLint("CheckResult")
@@ -102,6 +92,23 @@ class ListViewModel(
         eventDisposable?.apply {
             if (isDisposed.not()) {
                 dispose()
+            }
+        }
+    }
+
+    fun startListenEvents() {
+        eventDisposable = eventListener.subscribe { event ->
+            when (event.type) {
+                EventType.ITEM_CLICK -> {
+                    if (event.obj is UserDto) {
+                        onItemClick(event.obj)
+                    }
+                }
+                EventType.ICON_CLICK -> {
+                    if (event.obj is UserDto) {
+                        onIconClick(event.obj)
+                    }
+                }
             }
         }
     }

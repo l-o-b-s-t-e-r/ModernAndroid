@@ -18,7 +18,8 @@ class UserBoundaryCallback(
     private val remoteRepository: IRemoteRepository,
     private val config: PagedList.Config,
     private val networkState: MutableLiveData<NetworkState>,
-    private val userMapper: UserMapper
+    private val userMapper: UserMapper,
+    private val query: String
 ) : PagedList.BoundaryCallback<UserDto>() {
 
     @SuppressLint("CheckResult")
@@ -29,8 +30,7 @@ class UserBoundaryCallback(
             .delay(2, TimeUnit.SECONDS)
             .observeOn(Schedulers.io())
             .subscribe({
-                Log.e("UserBoundaryCallback", "onZeroItemsLoaded")
-                val response = remoteRepository.getAllUsersWithLimit(config.initialLoadSizeHint)
+                val response = remoteRepository.getAllUsersWithLimit(query, config.initialLoadSizeHint)
                 saveResponse(response.map { userMapper.toEntity(it) })
                 networkState.postValue(NetworkState.LOADED)
             },{
@@ -47,8 +47,7 @@ class UserBoundaryCallback(
             .delay(2, TimeUnit.SECONDS)
             .observeOn(Schedulers.io())
             .subscribe({
-                Log.e("UserBoundaryCallback", "onItemAtEndLoaded")
-                val response = remoteRepository.getAllUsersAfterWithLimit(itemAtEnd.name, config.pageSize)
+                val response = remoteRepository.getAllUsersAfterWithLimit(query, itemAtEnd.name, config.pageSize)
                 saveResponse(response.map { userMapper.toEntity(it) })
                 networkState.postValue(NetworkState.LOADED)
             },{
