@@ -30,8 +30,8 @@ class ListViewModel(
 
     private val PAGED_LIST_CONFIG = PagedList.Config.Builder()
         .setEnablePlaceholders(false)
-        .setInitialLoadSizeHint(20)
-        .setPrefetchDistance(3)
+        .setInitialLoadSizeHint(10)
+        .setPrefetchDistance(1)
         .setPageSize(10)
         .build()
 
@@ -46,8 +46,6 @@ class ListViewModel(
     val searchQuery = getUserSearchQueryUseCase.execute()
 
     val usersState = MutableLiveData<UsersState>()
-
-    val refreshState = MutableLiveData<RefreshState>()
 
     val users: LiveData<PagedList<UserDto>> by lazy {
         getAllUsersPerPage(PAGED_LIST_CONFIG)
