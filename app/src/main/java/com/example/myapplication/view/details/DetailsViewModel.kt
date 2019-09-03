@@ -2,12 +2,10 @@ package com.example.myapplication.view.details
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
-import com.example.myapplication.domain.usecases.DeleteFirstUserUseCase
 import com.example.myapplication.domain.usecases.HideFirstUserUseCase
 import com.example.myapplication.domain.usecases.ShowLastUserUseCase
 
-class DetailsViewModel(private val deleteFirstUserUseCase: DeleteFirstUserUseCase,
-                       private val showLastUserUseCase: ShowLastUserUseCase,
+class DetailsViewModel(private val showLastUserUseCase: ShowLastUserUseCase,
                        private val hideFirstUserUseCase: HideFirstUserUseCase) : ViewModel() {
 
     @SuppressLint("CheckResult")

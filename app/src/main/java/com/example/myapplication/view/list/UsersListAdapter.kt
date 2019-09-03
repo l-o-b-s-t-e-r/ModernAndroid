@@ -13,10 +13,10 @@ import com.example.myapplication.databinding.ItemMaleBinding
 import com.example.myapplication.databinding.ItemProgressBinding
 import com.example.myapplication.domain.Event
 import com.example.myapplication.domain.EventType
-import com.example.myapplication.domain.NetworkState
 import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.Female
 import com.example.myapplication.domain.entities.Male
+import com.example.myapplication.domain.states.NetworkState
 import kotlinx.android.synthetic.main.item_female.view.*
 import javax.inject.Inject
 

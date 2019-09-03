@@ -10,5 +10,4 @@ class GetUserSearchQueryUseCase @Inject constructor(
 
     fun execute() = localRepository.userSearchQuery
 
-
 }

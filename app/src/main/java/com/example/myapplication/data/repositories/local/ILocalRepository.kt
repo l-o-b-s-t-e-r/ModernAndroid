@@ -4,15 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import androidx.paging.PagedList
-import com.example.myapplication.domain.NetworkState
 import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.UserEntity
+import com.example.myapplication.domain.states.RefreshState
+import com.example.myapplication.domain.states.UsersState
 import io.reactivex.Completable
 import io.reactivex.Flowable
+import io.reactivex.subjects.PublishSubject
 
 interface ILocalRepository {
 
     val userSearchQuery: MutableLiveData<String>
+
+    val usersState: PublishSubject<UsersState>
+
+    val refreshState: PublishSubject<RefreshState>
 
     fun getAllUsersPerPage(): DataSource.Factory<Int, UserEntity>
 
@@ -28,7 +34,7 @@ interface ILocalRepository {
 
     fun getAllUsersAfterWithLimit(userKey: String, count: Int): List<UserEntity>
 
-    fun getAllUsersPerPage(config: PagedList.Config, networkState: MutableLiveData<NetworkState>): LiveData<PagedList<UserDto>>
+    fun getAllUsersPerPage(config: PagedList.Config): LiveData<PagedList<UserDto>>
 
     fun deleteUserById(id: String): Completable
 

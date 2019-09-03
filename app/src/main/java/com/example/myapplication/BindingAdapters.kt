@@ -5,8 +5,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.databinding.BindingAdapter
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.myapplication.domain.Loading
-import com.example.myapplication.domain.RefreshState
+import com.example.myapplication.domain.states.RefreshState
 
 @BindingAdapter("isVisible")
 fun isVisible(view: View, isVisible: Boolean) {
@@ -15,5 +14,5 @@ fun isVisible(view: View, isVisible: Boolean) {
 
 @BindingAdapter("refresh_state")
 fun isRefreshing(view: SwipeRefreshLayout, refreshState: RefreshState?) {
-    view.isRefreshing = refreshState == Loading
+    view.isRefreshing = refreshState == RefreshState.LOADING
 }

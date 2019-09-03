@@ -7,12 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
-import com.example.myapplication.domain.*
+import com.example.myapplication.domain.Event
+import com.example.myapplication.domain.EventType
 import com.example.myapplication.domain.dto.UserDto
-import com.example.myapplication.domain.usecases.GetAllUsersPerPageUseCase
-import com.example.myapplication.domain.usecases.GetUserSearchQueryUseCase
-import com.example.myapplication.domain.usecases.UpdateAllUsersUseCase
-import com.example.myapplication.domain.usecases.UpdateUserColorUseCase
+import com.example.myapplication.domain.states.RefreshState
+import com.example.myapplication.domain.states.UsersState
+import com.example.myapplication.domain.usecases.*
 import com.example.myapplication.randomColor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -23,7 +23,9 @@ class ListViewModel(
     private val updateAllUsersUseCase: UpdateAllUsersUseCase,
     private val updateUserColorUseCase: UpdateUserColorUseCase,
     private val getAllUsersPerPageUseCase: GetAllUsersPerPageUseCase,
-    private val getUserSearchQueryUseCase: GetUserSearchQueryUseCase
+    private val getUserSearchQueryUseCase: GetUserSearchQueryUseCase,
+    private val getUsersStateUseCase: GetUsersStateUseCase,
+    private val getRefreshStateUseCase: GetRefreshStateUseCase
 ) : ViewModel() {
 
     private val PAGED_LIST_CONFIG = PagedList.Config.Builder()
@@ -33,14 +35,19 @@ class ListViewModel(
         .setPageSize(10)
         .build()
 
-    val eventListener = PublishSubject.create<Event>()
     private var eventDisposable: Disposable? = null
 
-    val networkState = MutableLiveData<NetworkState>()
+    private val usersStatePublishSubject = getUsersStateUseCase.execute()
 
-    val refreshState = MutableLiveData<RefreshState>()
+    private val refreshStatePublishSubject = getRefreshStateUseCase.execute()
+
+    val eventListener = PublishSubject.create<Event>()
 
     val searchQuery = getUserSearchQueryUseCase.execute()
+
+    val usersState = MutableLiveData<UsersState>()
+
+    val refreshState = MutableLiveData<RefreshState>()
 
     val users: LiveData<PagedList<UserDto>> by lazy {
         getAllUsersPerPage(PAGED_LIST_CONFIG)
@@ -48,14 +55,29 @@ class ListViewModel(
 
     private fun getAllUsersPerPage(config: PagedList.Config): LiveData<PagedList<UserDto>> {
         return Transformations.switchMap(searchQuery) {
-            getAllUsersPerPageUseCase.execute(config, networkState)
+            getAllUsersPerPageUseCase.execute(config)
         }
+    }
+
+    @SuppressLint("CheckResult")
+    fun listenStates() {
+        usersStatePublishSubject
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { usersState.value = it }
+
+        refreshStatePublishSubject
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (it == RefreshState.LOADING) {
+                    updateAllUsers()
+                }
+            }
     }
 
     @SuppressLint("CheckResult")
     fun updateAllUsers() {
         updateAllUsersUseCase.execute(PAGED_LIST_CONFIG)
-            .doFinally { refreshState.postValue(NotLoading) }
+            .doFinally { refreshStatePublishSubject.onNext(RefreshState.NOT_LOADING) }
             .subscribe({
                 Log.i("loadUsers", "Users were updated successfully.")
             }, { e ->
@@ -96,7 +118,7 @@ class ListViewModel(
         }
     }
 
-    fun startListenEvents() {
+    fun listenUiEvents() {
         eventDisposable = eventListener.subscribe { event ->
             when (event.type) {
                 EventType.ITEM_CLICK -> {
