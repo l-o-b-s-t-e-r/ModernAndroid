@@ -11,21 +11,22 @@ import com.example.myapplication.data.repositories.remote.IRemoteRepository
 import com.example.myapplication.domain.UserMapper
 import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.entities.UserEntity
-import com.example.myapplication.domain.states.RefreshState
-import com.example.myapplication.domain.states.UsersState
+import com.example.myapplication.domain.states.GlobalStates
+import com.example.myapplication.domain.states.LocalStates
 import io.reactivex.Completable
 import io.reactivex.Flowable
-import io.reactivex.subjects.PublishSubject
 
 class LocalRepository(
     private val db: AppDatabase,
     private val remoteRepository: IRemoteRepository,
-    private val userMapper: UserMapper
+    private val userMapper: UserMapper,
+    private val globalStates: GlobalStates,
+    private val localStates: LocalStates
 ) : ILocalRepository {
 
-    override val usersState = PublishSubject.create<UsersState>()
+    override fun getUsersState() = localStates.usersState
 
-    override val refreshState = PublishSubject.create<RefreshState>()
+    override fun getRefreshState() = globalStates.refreshState
 
     override val userSearchQuery = MutableLiveData<String>().apply {
         postValue("")
@@ -74,7 +75,7 @@ class LocalRepository(
             config = config,
             userMapper = userMapper,
             query = userSearchQuery.value ?: "",
-            usersState = usersState
+            usersState = getUsersState()
         )
 
         return LivePagedListBuilder(

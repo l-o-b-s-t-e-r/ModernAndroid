@@ -7,6 +7,6 @@ class GetUsersStateUseCase @Inject constructor(
     private val localRepository: ILocalRepository
 ) {
 
-    fun execute() = localRepository.usersState
+    fun execute() = localRepository.getUsersState()
 
 }

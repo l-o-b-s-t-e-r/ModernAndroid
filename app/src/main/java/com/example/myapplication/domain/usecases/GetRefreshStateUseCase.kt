@@ -7,6 +7,6 @@ class GetRefreshStateUseCase @Inject constructor(
     private val localRepository: ILocalRepository
 ) {
 
-    fun execute() = localRepository.refreshState
+    fun execute() = localRepository.getRefreshState()
 
 }

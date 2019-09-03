@@ -16,9 +16,9 @@ interface ILocalRepository {
 
     val userSearchQuery: MutableLiveData<String>
 
-    val usersState: PublishSubject<UsersState>
+    fun getUsersState(): PublishSubject<UsersState>
 
-    val refreshState: PublishSubject<RefreshState>
+    fun getRefreshState(): PublishSubject<RefreshState>
 
     fun getAllUsersPerPage(): DataSource.Factory<Int, UserEntity>
 
