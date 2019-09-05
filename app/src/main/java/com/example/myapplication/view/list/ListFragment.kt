@@ -31,10 +31,10 @@ class ListFragment : BaseFragment<ListFragmentBinding, ListViewModel>() {
 
         viewModel.apply {
             users.observe(this@ListFragment, Observer { users ->
-                usersState.value = DataState(users)
+                usersStateLiveData.value = DataState(users)
             })
 
-            usersState.observe(this@ListFragment, Observer { state ->
+            usersStateLiveData.observe(this@ListFragment, Observer { state ->
                 when(state) {
                     is DataState -> {
                         usersListAdapter.submitList(state.data)

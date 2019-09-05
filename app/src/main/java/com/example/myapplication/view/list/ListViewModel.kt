@@ -8,7 +8,9 @@ import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import com.example.myapplication.domain.Event
-import com.example.myapplication.domain.EventType
+import com.example.myapplication.domain.EventPublisher
+import com.example.myapplication.domain.IconClickFilter
+import com.example.myapplication.domain.ItemClickFilter
 import com.example.myapplication.domain.dto.UserDto
 import com.example.myapplication.domain.states.RefreshState
 import com.example.myapplication.domain.states.UsersState
@@ -17,9 +19,11 @@ import com.example.myapplication.randomColor
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.PublishSubject
 
 class ListViewModel(
+    private val eventPublisher: EventPublisher,
+    private val itemClickFilter: ItemClickFilter,
+    private val iconClickFilter: IconClickFilter,
     private val updateAllUsersUseCase: UpdateAllUsersUseCase,
     private val updateUserColorUseCase: UpdateUserColorUseCase,
     private val getAllUsersPerPageUseCase: GetAllUsersPerPageUseCase,
@@ -37,15 +41,13 @@ class ListViewModel(
 
     private var eventDisposable: Disposable? = null
 
-    private val usersStatePublishSubject = getUsersStateUseCase.execute()
+    private val usersState = getUsersStateUseCase.execute()
 
-    private val refreshStatePublishSubject = getRefreshStateUseCase.execute()
-
-    val eventListener = PublishSubject.create<Event>()
+    private val refreshState = getRefreshStateUseCase.execute()
 
     val searchQuery = getUserSearchQueryUseCase.execute()
 
-    val usersState = MutableLiveData<UsersState>()
+    val usersStateLiveData = MutableLiveData<UsersState>()
 
     val users: LiveData<PagedList<UserDto>> by lazy {
         getAllUsersPerPage(PAGED_LIST_CONFIG)
@@ -59,11 +61,11 @@ class ListViewModel(
 
     @SuppressLint("CheckResult")
     fun listenStates() {
-        usersStatePublishSubject
+        usersState
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { usersState.value = it }
+            .subscribe { usersStateLiveData.value = it }
 
-        refreshStatePublishSubject
+        refreshState
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it == RefreshState.LOADING) {
@@ -75,13 +77,30 @@ class ListViewModel(
     @SuppressLint("CheckResult")
     fun updateAllUsers() {
         updateAllUsersUseCase.execute(PAGED_LIST_CONFIG)
-            .doFinally { refreshStatePublishSubject.onNext(RefreshState.NOT_LOADING) }
+            .doFinally { refreshState.onNext(RefreshState.NOT_LOADING) }
             .subscribe({
                 Log.i("loadUsers", "Users were updated successfully.")
             }, { e ->
                 Log.e("loadUsers", "Users were not updated.")
                 e.printStackTrace()
             })
+    }
+
+    override fun onCleared() {
+        eventDisposable?.apply {
+            if (isDisposed.not()) {
+                dispose()
+            }
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    fun listenUiEvents() {
+        itemClickFilter.filter()
+            .subscribe { onItemClick(it) }
+
+        iconClickFilter.filter()
+            .subscribe { onIconClick(it) }
     }
 
     @SuppressLint("CheckResult")
@@ -108,28 +127,8 @@ class ListViewModel(
             })
     }
 
-    override fun onCleared() {
-        eventDisposable?.apply {
-            if (isDisposed.not()) {
-                dispose()
-            }
-        }
-    }
 
-    fun listenUiEvents() {
-        eventDisposable = eventListener.subscribe { event ->
-            when (event.type) {
-                EventType.ITEM_CLICK -> {
-                    if (event.obj is UserDto) {
-                        onItemClick(event.obj)
-                    }
-                }
-                EventType.ICON_CLICK -> {
-                    if (event.obj is UserDto) {
-                        onIconClick(event.obj)
-                    }
-                }
-            }
-        }
+    fun sendEvent(event: Event) {
+        eventPublisher.send(event)
     }
 }

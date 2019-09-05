@@ -114,10 +114,10 @@ class UsersListAdapter @Inject constructor(private val viewModel: ListViewModel)
             binding.apply {
                 setVariable(BR.user, user)
                 itemView.setOnClickListener {
-                    viewModel.eventListener.onNext(Event(EventType.ITEM_CLICK, user))
+                    viewModel.sendEvent(Event(EventType.ITEM_CLICK, user))
                 }
                 itemView.icon_gender.setOnClickListener {
-                    viewModel.eventListener.onNext(Event(EventType.ICON_CLICK, user))
+                    viewModel.sendEvent(Event(EventType.ICON_CLICK, user))
                 }
                 executePendingBindings()
             }
